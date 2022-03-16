@@ -22,22 +22,15 @@
                     <td th:text="${person.prenom}"></td>
                     <td th:text="${person.nom}"></td>
                     <td>
-                    	<form th:action="@{/remove}" th:object="${person}" method="post">
-		                    <input type="hidden" name="id" th:value="${person.id}">
-		                    <input type="hidden" name="nom" th:value="${person.nom}">
-		                    <input type="hidden" name="prenom" th:value="${person.prenom}">
-		                    <button type="submit">Delete</button>
-		               </form>
+                    	<a th:href="@{/persons/remove/{id}(id=${person.id})}">Delete</a>
                     </td>
                     <td>
-                    	<form th:action="@{/id}" th:object="${person.id}" method="post">
-		                    <button type="submit">Detail</button>
-		               </form>
+                    	<a th:href="@{/persons/{id}(id=${person.id})}">Detail</a>
                     </td>
                 </tr>
             </tbody>
         </table>
         
-        <a href="/create">New person</a>
+        <a href="persons/create">New person</a>
     </body>
 </html>

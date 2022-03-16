@@ -6,7 +6,7 @@
     </head>
     <body>
         <h1>New person</h1>
-        <form th:action="@{/insert}" th:object="${person}" method="post">
+        <form th:action="@{/persons/insert}" th:object="${person}" method="post">
             <input type="hidden" th:field="*{id}" />
             
             <label for="prenom">First name of the person</label>

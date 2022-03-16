@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class PersonController
@@ -25,38 +26,31 @@ public class PersonController
 		return mav;
 	}
 	
-	@GetMapping("/{id}")
-	public String detail(@PathVariable long id, Map<String, Object> model)
+	@GetMapping("persons/{id}")
+	public String detail(@PathVariable("id") long id, Map<String, Object> model)
 	{
 		model.put("person", personsRepo.findById(id).get());
 		return "detail";
 	}
-	
-//	@GetMapping("/detail")
-//	public String detail(@ModelAttribute(value = "person") Person person, Map<String, Object> model)
-//	{
-//		model.put("person", person);
-//		return "detail";
-//	}
 
-	@RequestMapping("/create")
+	@RequestMapping("persons/create")
 	public String create(@ModelAttribute(value="person") Person person, Map<String, Object> model)
 	{
 		model.put("person", new Person());
 		return "create";
 	}
 	
-	@RequestMapping("/insert")
-	public String insert(@ModelAttribute(value="person") Person person, Map<String, Object> model)
+	@RequestMapping("persons/insert")
+	public RedirectView insert(@ModelAttribute(value="person") Person person, Map<String, Object> model)
 	{
 		personsRepo.save(person);
-		return "redirect:persons";
+		return new RedirectView("/persons");
 	}
 
-	@RequestMapping("/remove")
-	public String empDelete(@ModelAttribute(value = "person") Person person, Map<String, Object> model)
+	@GetMapping("persons/remove/{id}")
+	public RedirectView empDelete(@PathVariable("id") long id, Map<String, Object> model)
 	{
-		personsRepo.delete(person);
-		return "redirect:persons";
+		personsRepo.deleteById(id);
+		return new RedirectView("/persons");
 	}
 }
