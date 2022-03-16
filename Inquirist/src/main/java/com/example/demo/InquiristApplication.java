@@ -7,12 +7,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 
+import com.example.demo.model.Person;
+import com.example.demo.repository.PersonsRepository;
+
 @SpringBootApplication
 @Configuration
 public class InquiristApplication
 {
 	@Autowired
-	PersonnesRepository personsRepo;
+	PersonsRepository personsRepo;
 
 	public static void main(String[] args)
 	{
@@ -24,10 +27,7 @@ public class InquiristApplication
 	{
 		for (int i = 0; i < 5; i++)
 		{
-			Person p = new Person();
-			p.setNom("Chevre" + i);
-			p.setPrenom("Sebastien" + i);
-
+			Person p = new Person("Chevre" + i, "Sebastien" + i);
 			personsRepo.save(p);
 		}
 	}

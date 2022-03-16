@@ -1,8 +1,9 @@
-package com.example.demo;
+package com.example.demo.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Id;
 
@@ -16,9 +17,16 @@ public class Person
 	@Column(name = "prenom") // si pas spécifié prend le nom du champ
 	private String prenom;
 
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Long id;
+
+	public Person(String nom, String prenom)
+	{
+		super();
+		this.nom = nom;
+		this.prenom = prenom;
+	}
 
 	public Person()
 	{
@@ -40,7 +48,7 @@ public class Person
 		this.nom = nom;
 	}
 
-	public String getPrenom()	
+	public String getPrenom()
 	{
 		return prenom;
 	}

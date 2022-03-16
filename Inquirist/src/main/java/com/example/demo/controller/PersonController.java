@@ -1,6 +1,5 @@
-package com.example.demo;
+package com.example.demo.controller;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.example.demo.model.Person;
+import com.example.demo.repository.PersonsRepository;
+
 @Controller
 public class PersonController
 {	
 	@Autowired
-	PersonnesRepository personsRepo;
+	PersonsRepository personsRepo;
 	
 	@GetMapping("/persons")
 	public ModelAndView persons()
@@ -30,14 +32,14 @@ public class PersonController
 	public String detail(@PathVariable("id") long id, Map<String, Object> model)
 	{
 		model.put("person", personsRepo.findById(id).get());
-		return "detail";
+		return "person_detail";
 	}
 
 	@RequestMapping("persons/create")
 	public String create(@ModelAttribute(value="person") Person person, Map<String, Object> model)
 	{
 		model.put("person", new Person());
-		return "create";
+		return "person_create";
 	}
 	
 	@RequestMapping("persons/insert")
