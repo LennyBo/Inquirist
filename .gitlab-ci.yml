@@ -20,7 +20,7 @@ build:
   stage: build
   script:
     - echo "Build process"
-    - ./mvnw clean install
+    - ./Inquirist/mvnw clean install
     - echo "Build ok"
   only:
     - main
