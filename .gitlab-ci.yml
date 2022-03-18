@@ -20,6 +20,7 @@ build:
   stage: build
   script:
     - echo "Build process"
+    - chmod +x Inquirist/mvnw
     - ./Inquirist/mvnw clean install
     - echo "Build ok"
   only:
