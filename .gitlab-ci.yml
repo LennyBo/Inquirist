@@ -17,6 +17,7 @@ before_script:
   - echo $CI_COMMIT_SHORT_SHA # calls another predefined variable
 
 build:
+  image: maven:3-jdk-8
   stage: build
   script:
     - echo "Build process"
@@ -27,6 +28,9 @@ build:
     - main
   tags:
     - alpine-docker
+  artifacts:
+    paths:
+      - target/*.jar
 
 whereami:
   stage: whereami
