@@ -42,7 +42,7 @@ services:
       # TODO END replace with your config !
 
       # TODO START replace my_todo with your database name config ! 
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db/my_todo?autoReconnect=true&useSSL=false&createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db/inquirist?autoReconnect=true&useSSL=false&createDatabaseIfNotExist=true
       # TODO START replace my_todo with your database name config ! 
     command: mvn clean spring-boot:run
     networks:
