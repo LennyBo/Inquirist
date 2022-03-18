@@ -22,7 +22,7 @@ build:
     - echo "Build process"
     - echo "Build ok"
   only:
-    - master
+    - main
   tags:
     - alpine-docker
 
@@ -33,7 +33,7 @@ whereami:
     - ls
     - echo "whereami ok"
   only:
-    - master
+    - main
   tags:
     - alpine-docker
 
@@ -43,7 +43,7 @@ unittest:
     - echo "start test"
     - echo "test ok"
   only:
-    - master
+    - main
   tags:
     - alpine-docker
 
@@ -53,7 +53,7 @@ katalon_test_suite:
     - echo "start katalon test suite"
     - echo "katalon test suite ok"
   only:
-    - master
+    - main
   tags:
     - alpine-docker
 
@@ -63,7 +63,7 @@ sonarqube:
     - echo "start sonarqube stage"
     - echo "sonarqube ok"
   only:
-    - master
+    - main
   tags:
     - alpine-docker
 
@@ -75,7 +75,7 @@ deploy_ssh:
     - echo "deploy apps"
     - echo "deploy ok"
   only:
-    - master
+    - main
   tags:
     - alpine-docker
   when: manual
