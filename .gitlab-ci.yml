@@ -18,9 +18,6 @@ before_script:
 
 build:
   stage: build
-  language: java
-  jdk:
-    - openjdk11
   script:
     - echo "Build process"
     - ./mvnw clean install
