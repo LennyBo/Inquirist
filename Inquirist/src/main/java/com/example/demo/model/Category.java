@@ -6,6 +6,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+@Data
 @Entity
 @Table
 public class Category
@@ -24,31 +29,5 @@ public class Category
 	public Category()
 	{
 		super();
-	}
-
-	@Override
-	public String toString()
-	{
-		return "Category [nom=" + nom + ", id=" + id + "]";
-	}
-
-	public String getNom()
-	{
-		return nom;
-	}
-
-	public void setNom(String nom)
-	{
-		this.nom = nom;
-	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
 	}
 }

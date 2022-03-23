@@ -4,11 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
+import lombok.Data;
+
+@Data
 @Entity // définit une entité jpa
 @Table(name = "tbl_personne") // optionnel, si pas spécifié prend le nom de l'entité
 public class Person
@@ -20,7 +23,7 @@ public class Person
 	private String prenom;
 
 	@OneToOne
-    @JoinColumn(name = "categorie_id")
+	@JoinColumn(name = "categorie_id")
 	private Category categorie;
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,51 +41,5 @@ public class Person
 	public Person()
 	{
 		super();
-	}
-
-	@Override
-	public String toString()
-	{
-		return "Person [nom=" + nom + ", prenom=" + prenom + ", categorie=" + categorie + ", id=" + id + "]";
-	}
-
-	public String getNom()
-	{
-		return nom;
-	}
-
-	public void setNom(String nom)
-	{
-		this.nom = nom;
-	}
-
-	public String getPrenom()
-	{
-		return prenom;
-	}
-
-	public void setPrenom(String prenom)
-	{
-		this.prenom = prenom;
-	}
-
-	public Category getCategorie()
-	{
-		return categorie;
-	}
-
-	public void setCategorie(Category categorie)
-	{
-		this.categorie = categorie;
-	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
 	}
 }
