@@ -17,18 +17,21 @@ before_script:
   - echo $CI_COMMIT_SHORT_SHA # calls another predefined variable
 
 build:
+  image: maven:3-jdk-8
   stage: build
-  language: java
-  jdk:
-    - openjdk11
   script:
     - echo "Build process"
-    - ./mvnw clean install
+    - chmod +x Inquirist/mvnw
+    - ./Inquirist/mvnw -N wrapper:wrapper
+    - ./Inquirist/mvnw clean install
     - echo "Build ok"
   only:
     - main
   tags:
     - alpine-docker
+  artifacts:
+    paths:
+      - target/*.jar
 
 whereami:
   stage: whereami
