@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 @Entity // définit une entité jpa
 @Table(name = "tbl_personne") // optionnel, si pas spécifié prend le nom de l'entité
@@ -17,25 +19,31 @@ public class Person
 	@Column(name = "prenom") // si pas spécifié prend le nom du champ
 	private String prenom;
 
+	@OneToOne
+    @JoinColumn(name = "categorie_id")
+	private Category categorie;
+
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Long id;
 
-	public Person(String nom, String prenom)
+	public Person(String nom, String prenom, Category categorie)
 	{
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
+		this.categorie = categorie;
 	}
 
 	public Person()
 	{
+		super();
 	}
 
 	@Override
 	public String toString()
 	{
-		return "Person [nom=" + nom + ", prenom=" + prenom + ", id=" + id + "]";
+		return "Person [nom=" + nom + ", prenom=" + prenom + ", categorie=" + categorie + ", id=" + id + "]";
 	}
 
 	public String getNom()
@@ -56,6 +64,16 @@ public class Person
 	public void setPrenom(String prenom)
 	{
 		this.prenom = prenom;
+	}
+
+	public Category getCategorie()
+	{
+		return categorie;
+	}
+
+	public void setCategorie(Category categorie)
+	{
+		this.categorie = categorie;
 	}
 
 	public Long getId()

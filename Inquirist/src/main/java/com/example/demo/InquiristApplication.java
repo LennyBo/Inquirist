@@ -7,7 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 
+import com.example.demo.model.Category;
 import com.example.demo.model.Person;
+import com.example.demo.repository.CategoriesRepository;
 import com.example.demo.repository.PersonsRepository;
 
 @SpringBootApplication
@@ -16,6 +18,9 @@ public class InquiristApplication
 {
 	@Autowired
 	PersonsRepository personsRepo;
+	
+	@Autowired
+	CategoriesRepository categoriesRepo;
 
 	public static void main(String[] args)
 	{
@@ -25,9 +30,11 @@ public class InquiristApplication
 	@PostConstruct
 	public void init()
 	{
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 10; i++)
 		{
-			Person p = new Person("Chevre" + i, "Sebastien" + i);
+			Category c = new Category("Categorie" + i);
+			categoriesRepo.save(c);
+			Person p = new Person("Chevre" + i, "Sebastien" + i, c);
 			personsRepo.save(p);
 		}
 	}

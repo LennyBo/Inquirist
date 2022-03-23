@@ -48,9 +48,9 @@ public class PersonController
 		personsRepo.save(person);
 		return new RedirectView("/persons");
 	}
-
-	@GetMapping("persons/remove/{id}")
-	public RedirectView empDelete(@PathVariable("id") long id, Map<String, Object> model)
+	
+	@GetMapping("persons/{id}/remove")
+	public RedirectView empDelete2(@PathVariable("id") long id, Map<String, Object> model)
 	{
 		personsRepo.deleteById(id);
 		return new RedirectView("/persons");

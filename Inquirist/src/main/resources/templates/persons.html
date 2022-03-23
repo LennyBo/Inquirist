@@ -12,6 +12,7 @@
                 	<th>Id</th>
                     <th>First name</th>
                     <th>Last name</th>
+                    <th>Category</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -21,8 +22,9 @@
                  	<td th:text="${person.id}"></td>
                     <td th:text="${person.prenom}"></td>
                     <td th:text="${person.nom}"></td>
+                    <td th:text="${person.categorie.nom}"></td>
                     <td>
-                    	<a th:href="@{/persons/remove/{id}(id=${person.id})}">Delete</a>
+                    	<a th:href="@{/persons/{id}/remove(id=${person.id})}">Delete</a>
                     </td>
                     <td>
                     	<a th:href="@{/persons/{id}(id=${person.id})}">Detail</a>
