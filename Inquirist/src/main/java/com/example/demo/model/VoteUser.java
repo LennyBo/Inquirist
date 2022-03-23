@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Data;
+
+@Data
 @Entity
 public class VoteUser
 {
@@ -38,51 +41,4 @@ public class VoteUser
 	{
 		super();
 	}
-
-	@Override
-	public String toString()
-	{
-		return "VoteUser [id=" + id + ", poll=" + poll + ", user=" + user + ", answer=" + answer + "]";
-	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
-
-	public Poll getPoll()
-	{
-		return poll;
-	}
-
-	public void setPoll(Poll poll)
-	{
-		this.poll = poll;
-	}
-
-	public User getUser()
-	{
-		return user;
-	}
-
-	public void setUser(User user)
-	{
-		this.user = user;
-	}
-
-	public Answer getAnswer()
-	{
-		return answer;
-	}
-
-	public void setAnswer(Answer answer)
-	{
-		this.answer = answer;
-	}
-
 }

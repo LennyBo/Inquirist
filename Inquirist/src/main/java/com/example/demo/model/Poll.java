@@ -11,6 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Data;
+
+@Data
 @Entity
 public class Poll
 {
@@ -42,71 +45,4 @@ public class Poll
 	{
 		super();
 	}
-
-	@Override
-	public String toString()
-	{
-		return "Poll [id=" + id + ", title=" + title + ", description=" + description + ", startDate=" + startDate + ", ownerId=" + owner.getId() + "]";
-	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
-
-	public User getOwerId()
-	{
-		return this.owner;
-	}
-
-	public void setOwerId(User owner)
-	{
-		this.owner = owner;
-	}
-
-	public String getTitle()
-	{
-		return title;
-	}
-
-	public void setTitle(String title)
-	{
-		this.title = title;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
-
-	public Date getStartDate()
-	{
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate)
-	{
-		this.startDate = startDate;
-	}
-
-	public long getOwnerId()
-	{
-		return owner.getId();
-	}
-
-	public void setOwnerId(long ownerId)
-	{
-		this.owner.setId(ownerId);
-	}
-
 }
