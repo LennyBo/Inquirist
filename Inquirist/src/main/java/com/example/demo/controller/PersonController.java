@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.model.Person;
+import com.example.demo.repository.CategoriesRepository;
 import com.example.demo.repository.PersonsRepository;
 
 @Controller
@@ -22,6 +23,9 @@ public class PersonController
 {	
 	@Autowired
 	PersonsRepository personsRepo;
+	
+	@Autowired
+	CategoriesRepository categoriesRepo;
 	
 	@GetMapping
 	public ModelAndView persons()
@@ -42,6 +46,7 @@ public class PersonController
 	public String create(@ModelAttribute(value="person") Person person, Map<String, Object> model)
 	{
 		model.put("person", new Person());
+		model.put("categories", categoriesRepo.findAll());
 		return "person_create";
 	}
 	

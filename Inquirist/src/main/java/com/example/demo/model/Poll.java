@@ -14,31 +14,35 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import lombok.Data;
 
+@Data
 @Entity
-public class Poll {
+public class Poll
+{
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Long id;
-	
+
 	private String title;
 	private String description;
-	
+
 	@Temporal(TemporalType.DATE)
 	private Date startDate;
-	
 	
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "ownerId")
 	private User owner;
-	
-	
+
 	public Poll(String title, String description, Date startDate, User owner)
 	{
 		super();
@@ -98,10 +102,6 @@ public class Poll {
 
 	public void setOwner(User owner) {
 		this.owner = owner;
-	}
+	} 
 	
-
-
-	
-
 }
