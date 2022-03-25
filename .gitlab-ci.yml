@@ -18,15 +18,13 @@ before_script:
   - echo $CI_COMMIT_SHORT_SHA # calls another predefined variable
 
 build:
-  image: maven:3.6.0-jdk-11-slim
   stage: build
   script:
-    - echo "Build process"
+    - echo "Build process and tests"
     - cd Inquirist
     - chmod +x mvnw
     - ./mvnw --version
-    - ./mvnw -N wrapper:wrapper
-    - ./mvnw clean install
+    - ./mvnw clean package
     - echo "Build ok"
   only:
     - main
@@ -40,6 +38,7 @@ unittest:
   stage: test
   script:
     - echo "start test"
+    - ls
     - echo "test ok"
   only:
     - main
