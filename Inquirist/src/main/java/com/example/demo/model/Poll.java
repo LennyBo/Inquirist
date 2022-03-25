@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,7 +33,8 @@ public class Poll {
 	private Date startDate;
 	
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "ownerId")
 	private User owner;
 	
@@ -46,10 +52,12 @@ public class Poll {
 	{	
 	}
 	
+	
+
 	@Override
 	public String toString() {
-		return "Poll [id=" + id + ", title=" + title + ", description=" + description
-				+ ", startDate=" + startDate + ", ownerId=" + owner.getId() + "]";
+		return "Poll [id=" + id + ", title=" + title + ", description=" + description + ", startDate=" + startDate
+				+ ", owner=" + owner + "]";
 	}
 
 	public Long getId() {
@@ -58,14 +66,6 @@ public class Poll {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public User getOwerId() {
-		return this.owner;
-	}
-
-	public void setOwerId(User owner) {
-		this.owner = owner;
 	}
 
 	public String getTitle() {
@@ -92,13 +92,15 @@ public class Poll {
 		this.startDate = startDate;
 	}
 
-	public long getOwnerId() {
-		return owner.getId();
+	public User getOwner() {
+		return owner;
 	}
 
-	public void setOwnerId(long ownerId) {
-		this.owner.setId(ownerId);
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
+	
+
 
 	
 
