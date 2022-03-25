@@ -35,21 +35,11 @@ build:
     paths:
       - target/*.jar
 
-whereami:
-  stage: whereami
-  script:
-    - echo "whereami process"
-    - ls
-    - echo "whereami ok"
-  only:
-    - main
-  tags:
-    - alpine-docker
-
 unittest:
   stage: test
   script:
     - echo "start test"
+    - ./mvnw test
     - echo "test ok"
   only:
     - main
