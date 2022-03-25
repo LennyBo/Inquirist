@@ -21,6 +21,7 @@ build:
   stage: build
   script:
     - echo "Build process"
+    - java --version
     - cd Inquirist
     - chmod +x mvnw
     - ./mvnw -N wrapper:wrapper
