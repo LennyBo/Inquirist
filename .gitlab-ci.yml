@@ -21,7 +21,7 @@ build:
   stage: build
   script:
     - echo "Build process"
-    - cd Inquirist.
+    - cd Inquirist
     - mvnw --version
     - chmod +x mvnw
     - ./mvnw -N wrapper:wrapper
