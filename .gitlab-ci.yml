@@ -2,6 +2,7 @@ image: ubuntu
 
 variables:
   SOME_VAR: "some value"
+  SONAR_TOKEN: "b59093f5200cd1a7575092c434998e3c3b0fc0a2"
 
 stages:
   - build
@@ -39,7 +40,6 @@ unittest:
   stage: test
   script:
     - echo "start test"
-    - ./mvnw test
     - echo "test ok"
   only:
     - main
@@ -47,19 +47,16 @@ unittest:
     - alpine-docker
 
 katalon_test_suite:
-  stage: test
-  script:
-    - echo "start katalon test suite"
-    - echo "katalon test suite ok"
-  only:
-    - main
   tags:
-    - alpine-docker
+    - shell
+  script:
+    - echo "Yeet"
 
 sonarqube:
   stage: sonarqube
   script:
     - echo "start sonarqube stage"
+    - ./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=0:0
     - echo "sonarqube ok"
   only:
     - main
