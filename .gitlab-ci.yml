@@ -22,8 +22,8 @@ build:
   script:
     - echo "Build process"
     - cd Inquirist
-    - ./mvnw --version
     - chmod +x mvnw
+    - ./mvnw --version
     - ./mvnw -N wrapper:wrapper
     - ./mvnw clean install
     - echo "Build ok"
