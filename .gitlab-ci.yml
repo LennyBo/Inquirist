@@ -1,4 +1,4 @@
-image: ubuntu
+image: maven:3.6.0-jdk-11-slim
 
 variables:
   SOME_VAR: "some value"
@@ -13,7 +13,6 @@ stages:
 
 before_script:
   - echo "Start CI/CD"
-  - apt install openjdk-11-jre-headless
   - echo "SOME_VAR = $SOME_VAR" # calls my custom variable
   - echo $CI_JOB_STAGE  # calls a predefined variable -  https://docs.gitlab.com/ee/ci/variables/predefined_variables.html
   - echo $CI_COMMIT_SHORT_SHA # calls another predefined variable
@@ -21,11 +20,12 @@ before_script:
 build:
   stage: build
   script:
-    - echo "Build process and tests"
+    - echo "Build process"
     - cd Inquirist
     - chmod +x mvnw
     - ./mvnw --version
-    - ./mvnw clean package
+    - ./mvnw -N wrapper:wrapper
+    - ./mvnw clean install
     - echo "Build ok"
   only:
     - main
@@ -39,7 +39,6 @@ unittest:
   stage: test
   script:
     - echo "start test"
-    - ls
     - echo "test ok"
   only:
     - main
