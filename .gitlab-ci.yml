@@ -23,7 +23,6 @@ build:
     - echo "Build process"
     - cd Inquirist
     - chmod +x mvnw
-    - ./mvnw --version
     - ./mvnw -N wrapper:wrapper
     - ./mvnw clean install
     - echo "Build ok"
@@ -35,30 +34,15 @@ build:
     paths:
       - target/*.jar
 
-unittest:
-  stage: test
-  script:
-    - echo "start test"
-    - echo "test ok"
-  only:
-    - main
-  tags:
-    - alpine-docker
 
-katalon_test_suite:
-  stage: test
-  script:
-    - echo "start katalon test suite"
-    - echo "katalon test suite ok"
-  only:
-    - master
-  tags:
-    - alpine-docker
 
 sonarqube:
   stage: sonarqube
   script:
     - echo "start sonarqube stage"
+    - ls
+    - cd Inquirist
+    - chmod +x mvnw
     - ./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=0:0
     - echo "sonarqube ok"
   only:
