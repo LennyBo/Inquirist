@@ -21,9 +21,10 @@ build:
   stage: build
   script:
     - echo "Build process"
-    - chmod +x Inquirist/mvnw
-    - ./Inquirist/mvnw -N wrapper:wrapper
-    - ./Inquirist/mvnw clean install
+    - cd Inquirist
+    - chmod +x mvnw
+    - ./mvnw -N wrapper:wrapper
+    - ./mvnw clean install
     - echo "Build ok"
   only:
     - main
