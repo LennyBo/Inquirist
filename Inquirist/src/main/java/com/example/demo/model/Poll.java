@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -32,9 +33,19 @@ public class Poll
 	@Id
 	private Long id;
 
+	public String getAnswersString() {
+		return answersString;
+	}
+
+	public void setAnswersString(String answersString) {
+		this.answersString = answersString;
+	}
+
 	private String title;
 	private String description;
-
+	
+	private String answersString;
+	
 	@Temporal(TemporalType.DATE)
 	private Date startDate;
 	
@@ -56,6 +67,12 @@ public class Poll
 	{	
 	}
 	
+	public Poll(User owner)
+	{
+		super();
+		this.startDate =  new Date(System.currentTimeMillis());
+		this.owner = owner;		
+	}
 	
 
 	@Override
@@ -66,6 +83,16 @@ public class Poll
 
 	public Long getId() {
 		return id;
+	}
+	
+	public String[] getAnswersStringList()
+	{
+		if (answersString == null)
+		{
+			return new String[]{"yes", "no"};
+		}
+		return answersString.split(";");
+		
 	}
 
 	public void setId(Long id) {
@@ -102,6 +129,8 @@ public class Poll
 
 	public void setOwner(User owner) {
 		this.owner = owner;
-	} 
+	}
+
+
 	
 }

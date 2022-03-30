@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>New poll</title>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <h1>New poll</h1>
+        <form th:action="@{/polls/insert}" th:object="${poll}" method="post">     
+            <label for="title">title</label>
+            <input type="text" th:field="*{title}" />
+            
+            <label for="description">description</label>
+            <input type="text" th:field="*{description}"/>
+            <input type="text" th:field="*{answersString}" style="display:none;" id="answersString"/>
+            <p>
+            <a>answers :</a>
+            <ul id="answers">
+				<li> <input type="text" id="l1"/> </li> 
+				<li> <input type="text" id="l2"/> </li>                     
+            </ul>
+                    <button
+            onclick="
+            console.log('salut');
+            n++;
+            const li = document.createElement('li');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = 'l'+n;
+          	li.appendChild(input);
+            document.getElementById('answers').appendChild(li);
+            return false;"
+            >add answer</button>
+			<p>
+            <input type="submit"  onclick="
+            let answers = '';
+            for(let i=1;i<n+1;i++)
+            {
+            	answers += document.getElementById('l'+i).value + ';';
+            }
+            console.log(answers);
+            document.getElementById('answersString').value = answers;
+            "/>
+        </form>
+    </body>
+     <script> 
+     let n=2;
+     </script> 
+    
+</html>
