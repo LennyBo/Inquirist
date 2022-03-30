@@ -14,9 +14,9 @@
             <input type="text" th:field="*{nom}"/>
             
             <label for="nom">Category of the person</label>
-            <select th:field="*{categorie.nom}">
+            <select th:field="*{categorie}">
             	<option value="0">Select category</option>
-            	<option th:each="categorie : ${categories}" th:value="${categorie.nom}" th:text="${categorie.nom}">Select category</option>
+            	<option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.nom}">Select category</option>
             </select>
             
             <input type="submit" />
