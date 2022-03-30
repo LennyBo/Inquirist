@@ -1,8 +1,5 @@
 package com.example.demo;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 
-import com.example.demo.model.Category;
-import com.example.demo.model.Person;
-import com.example.demo.repository.CategoriesRepository;
 import com.example.demo.model.Answer;
+import com.example.demo.model.Category;
 import com.example.demo.model.Guest;
 import com.example.demo.model.Person;
 import com.example.demo.model.Poll;
@@ -21,6 +16,7 @@ import com.example.demo.model.User;
 import com.example.demo.model.VoteGuest;
 import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
+import com.example.demo.repository.CategoriesRepository;
 import com.example.demo.repository.GuestsRepository;
 import com.example.demo.repository.PersonsRepository;
 import com.example.demo.repository.PollsRepository;
@@ -80,7 +76,7 @@ public class InquiristApplication
 
 		for (int i = 0; i < 5; i++)
 		{
-			Poll p = new Poll("salut ?", "sondage n" + i, new Date(System.currentTimeMillis()), mat);
+			Poll p = new Poll("salut", "sondage" + i, mat);
 			pollsRepo.save(p);
 
 			Answer oui = new Answer(p, "oui");
@@ -96,7 +92,7 @@ public class InquiristApplication
 			voteguestsRepo.save(vg);
 
 		}
-		
+
 		usersRepo.save(mat);
 	}
 }
