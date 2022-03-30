@@ -1,43 +1,40 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Inquirist | polls</title>
-        <meta charset="utf-8" />
-    </head>
-    <body>
-      <div th:replace="fragments/header :: header"></div>  
-    
-        <h1>List of all polls</h1>
-        <table>
-            <thead>
-                <tr>
-                	<th>Id</th>
-                    <th>Title</th>
-                    <th>description</th>
-                    <th>StartDate</th>
-                    <th>Owner</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            
-            <tbody>
-                <tr th:each="poll : ${polls}">
-                 	<td th:text="${poll.id}"></td>
-                    <td th:text="${poll.title}"></td>
-                    <td th:text="${poll.description}"></td>
-                    <td th:text="${poll.startDate}"></td>
-                    <td th:text="${poll.owner.name}"></td>
-                    <td>
-                    	<a th:href="@{/polls/{id}/remove(id=${poll.id})}">Delete</a>
-                    </td>
-                    <td>
-                    	<a th:href="@{/polls/{id}(id=${poll.id})}">Detail</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-       
-        <a href="polls/create">Create Poll</a>
-    </body>
+<head>
+<title>Inquirist | polls</title>
+<meta charset="utf-8" />
+</head>
+<body>
+	<div th:replace="fragments/header :: header"></div>
+
+	<h1>List of all polls</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>description</th>
+				<th>StartDate</th>
+				<th>Owner</th>
+				<th></th>
+				<th></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr th:each="poll : ${polls}">
+				<td th:text="${poll.id}"></td>
+				<td th:text="${poll.title}"></td>
+				<td th:text="${poll.description}"></td>
+				<td th:text="${poll.startDate}"></td>
+				<td th:text="${poll.owner.name}"></td>
+				<td><a th:href="@{/polls/{id}/remove(id=${poll.id})}">Delete</a>
+				</td>
+				<td><a th:href="@{/polls/{id}(id=${poll.id})}">Detail</a></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a href="polls/create">Create Poll</a>
+</body>
 </html>
