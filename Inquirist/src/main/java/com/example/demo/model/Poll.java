@@ -33,13 +33,6 @@ public class Poll
 	@Id
 	private Long id;
 
-	public String getAnswersString() {
-		return answersString;
-	}
-
-	public void setAnswersString(String answersString) {
-		this.answersString = answersString;
-	}
 
 	private String title;
 	private String description;
@@ -95,6 +88,14 @@ public class Poll
 		
 	}
 
+	public String getAnswersString() {
+		return answersString;
+	}
+
+	public void setAnswersString(String answersString) {
+		this.answersString = answersString;
+	}
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
