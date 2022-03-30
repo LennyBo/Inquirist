@@ -44,11 +44,14 @@ public class PollController {
 		return "polls";
 	}
 	
-	@GetMapping("/{id}/detail")
-	public RedirectView detail(@PathVariable("id") long id, Map<String, Object> model)
+	@GetMapping("/{id}")
+	public String detail(@PathVariable("id") long id, Map<String, Object> model)
 	{
-		pollsRepo.deleteById(id);
-		return new RedirectView("");
+		model.put("poll", pollsRepo.findById(id).get());
+		
+		Object[] answers = answersRepo.findByPollId(id).toArray();
+		model.put("answers", answers);
+		return "poll_detail";
 	}
 	
 	@GetMapping("/{id}/remove")
