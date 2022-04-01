@@ -17,43 +17,42 @@ before_script:
   - echo $CI_JOB_STAGE  # calls a predefined variable -  https://docs.gitlab.com/ee/ci/variables/predefined_variables.html
   - echo $CI_COMMIT_SHORT_SHA # calls another predefined variable
 
-build:
-  stage: build
-  script:
-    - echo "Build process"
-    - cd Inquirist
-    - chmod +x mvnw
-    - ./mvnw -N wrapper:wrapper
-    - ./mvnw clean install
-    - echo "Build ok"
-  only:
-    - main
-  tags:
-    - alpine-docker
-  artifacts:
-    paths:
-      - target/*.jar
+# build:
+#   stage: build
+#   script:
+#     - echo "Build process"
+#     - cd Inquirist
+#     - chmod +x mvnw
+#     - ./mvnw -N wrapper:wrapper
+#     - ./mvnw clean install
+#     - echo "Build ok"
+#   only:
+#     - main
+#   tags:
+#     - alpine-docker
+#   artifacts:
+#     paths:
+#       - target/*.jar
 
 
 
-sonarqube:
-  stage: sonarqube
-  script:
-    - echo "start sonarqube stage"
-    - ls
-    - cd Inquirist
-    - chmod +x mvnw
-    - ./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=0:0
-    - echo "sonarqube ok"
-  only:
-    - main
-  tags:
-    - alpine-docker
+# sonarqube:
+#   stage: sonarqube
+#   script:
+#     - echo "start sonarqube stage"
+#     - ls
+#     - cd Inquirist
+#     - chmod +x mvnw
+#     - ./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=0:0
+#     - echo "sonarqube ok"
+#   only:
+#     - main
+#   tags:
+#     - alpine-docker
 
 deploy_ssh:
   stage: deploy
   before_script:
-    - apk add openssh-client
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" 
   script:
@@ -63,7 +62,7 @@ deploy_ssh:
     - main
   tags:
     - alpine-docker
-  when: manual
+  # when: manual
 
 after_script:
   - echo "End CI/CD"
