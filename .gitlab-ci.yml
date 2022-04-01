@@ -34,7 +34,7 @@ before_script:
 #     paths:
 #       - target/*.jar
 
-
+ 
 
 # sonarqube:
 #   stage: sonarqube
