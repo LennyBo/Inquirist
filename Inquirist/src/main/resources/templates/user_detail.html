@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Inquirist | user detail</title>
+<meta charset="utf-8" />
+</head>
+<body>
+	<div th:replace="fragments/header :: header"></div>
+
+	<h1>Detail</h1>
+	<div>
+		Id: <span th:text="${user.id}"></span>
+	</div>
+	<div>
+		Username: <span th:text="${user.username}"></span>
+	</div>
+	<div>
+		Name: <span th:text="${user.name}"></span>
+	</div>
+
+	<table>
+		<caption>Owned polls</caption>
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody th:remove="all-but-first">
+			<tr th:each="poll : ${polls}">
+				<td th:text="${poll.id}"></td>
+				<td th:text="${poll.title}"></td>
+				<td th:text="${poll.description}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a href="/users">Back to list</a>
+</body>
+</html>

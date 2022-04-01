@@ -2,9 +2,19 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Poll</title>
 </head>
 <body>
-	
+	<div th:replace="fragments/header :: header"></div>
+	<h2>POLL</h2>
+	<div th:text="${poll.title}"></div>
+	<div th:text="${poll.description}"></div>
+
+	<h3>Answer :</h3>
+	<tr th:each="answer : ${answers}">
+		<td th:text="${answer.id}"></td>
+		<td th:text="${answer.answer}"></td>
+		<br>
+	</tr>
 </body>
 </html>
