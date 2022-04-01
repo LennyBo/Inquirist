@@ -38,9 +38,6 @@ public class PollController {
 	@GetMapping
 	public String polls(Map<String, Object> model) {
 		model.put("polls", pollsRepo.findAll());
-		for (Poll p : pollsRepo.findAll()) {
-			//System.out.println(p);
-		}
 		return "polls";
 	}
 	
