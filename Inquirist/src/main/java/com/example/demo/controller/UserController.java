@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,15 @@ public class UserController
 	{
 		User user = usersRepo.findById(id).get();
 		model.put("user", user);
-		model.put("polls", user.getParticipatedPolls(voteusersRepo));
+		
+		List<VoteUser> votes = voteusersRepository.findAllByUser(user);
+		List<Poll> polls = new ArrayList<Poll>();
+		for(VoteUser vote : votes)
+		{
+			polls.add(vote.getAnswer().getPoll());
+		}
+		model.put("polls", polls);
+//		model.put("polls", user.getParticipatedPolls(voteusersRepository));
 //		model.put("polls", user.getOwnedPolls(pollsRepo));
 		return "user_detail";
 	}

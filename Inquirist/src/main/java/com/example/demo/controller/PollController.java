@@ -20,6 +20,9 @@ import com.example.demo.SecurityToolBox;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
+import com.example.demo.model.Vote;
+import com.example.demo.model.VoteGuest;
+import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
@@ -76,6 +79,8 @@ public class PollController
 
 			Object[] answers = answersRepo.findAllByPollId(id).toArray();
 			model.put("answers", answers);
+
+			model.put("vote", new Vote());
 		}
 		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
 		{
@@ -83,6 +88,8 @@ public class PollController
 
 			Object[] answers = answersRepo.findAllByPollId(id).toArray();
 			model.put("answers", answers);
+
+			model.put("vote", new Vote());
 		}
 
 		return "poll_detail";
@@ -105,16 +112,18 @@ public class PollController
 
 			poll.setOwner(owner);
 			poll.setStartDate(new Date(System.currentTimeMillis()));
-			pollsRepo.save(poll);
-
 			String[] answers = poll.getAnswersStringList();
-			for (int i = 0; i < answers.length; i++)
+			
+			if(Poll.Valid(poll) && answers.length > 1)
 			{
-				Answer answer = new Answer(poll, answers[i]);
-				answersRepo.save(answer);
+				pollsRepo.save(poll);
+				for (int i = 0; i < answers.length; i++)
+				{
+					Answer answer = new Answer(poll, answers[i]);
+					answersRepo.save(answer);
+				}
 			}
 		}
-
 		return new RedirectView("/polls");
 	}
 
