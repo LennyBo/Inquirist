@@ -61,7 +61,14 @@ public class Poll
 	public Poll()
 	{
 	}
-
+	
+	public static boolean Valid(Poll poll)
+	{
+		if(poll.getTitle() == null || poll.getTitle() == "")
+			return false;
+		return true;
+	}
+/*
 	public List<User> getParticipants(VoteUsersRepository voteusersRepo)
 	{
 		List<VoteUser> voteUsers = voteusersRepo.findAllByPoll(this);
@@ -69,7 +76,7 @@ public class Poll
 		for (VoteUser voteUser : voteUsers)
 			users.add(voteUser.getUser());
 		return users;
-	}
+	}*/
 
 	public String[] getAnswersStringList1()
 	{

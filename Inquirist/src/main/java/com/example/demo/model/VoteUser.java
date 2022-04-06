@@ -48,15 +48,6 @@ public class VoteUser
 		this.id = id;
 	}
 
-	public Poll getPoll()
-	{
-		return poll;
-	}
-
-	public void setPoll(Poll poll)
-	{
-		this.poll = poll;
-	}
 
 	public User getUser()
 	{

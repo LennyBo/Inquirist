@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.VoteUser;
@@ -46,7 +48,14 @@ public class UserController
 	{
 		User user = usersRepo.findById(id).get();
 		model.put("user", user);
-		model.put("polls", user.getParticipatedPolls(voteusersRepository));
+		List<VoteUser> votes = voteusersRepository.findAllByUser(user);
+		List<Poll> polls = new ArrayList<Poll>();
+		for(VoteUser vote : votes)
+		{
+			polls.add(vote.getAnswer().getPoll());
+		}
+		model.put("polls", polls);
+//		model.put("polls", user.getParticipatedPolls(voteusersRepository));
 //		model.put("polls", user.getOwnedPolls(pollsRepo));
 		return "user_detail";
 	}
