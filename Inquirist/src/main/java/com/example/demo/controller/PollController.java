@@ -84,15 +84,17 @@ public class PollController
 		User owner = usersRepo.findById((long) 1).get();
 		poll.setOwner(owner);
 		poll.setStartDate(new Date(System.currentTimeMillis()));
-		pollsRepo.save(poll);
+		String[] answers = poll.getAnswersStringList(); 
 
-		String[] answers = poll.getAnswersStringList();
-		for (int i = 0; i < answers.length; i++)
+		if(Poll.Valid(poll) && answers.length > 1)
 		{
-			Answer answer = new Answer(poll, answers[i]);
-			answersRepo.save(answer);
+			pollsRepo.save(poll);	
+			for(int i=0; i<answers.length; i++)
+			{
+				Answer answer = new Answer(poll, answers[i]);
+				answersRepo.save(answer);
+			}		
 		}
-
 		return new RedirectView("/polls");
 	}
 

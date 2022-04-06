@@ -52,7 +52,7 @@ public class User
 		List<VoteUser> voteUsers = voteusersRepo.findAllByUser(this);
 		List<Poll> polls = new LinkedList<Poll>();
 		for (VoteUser voteUser : voteUsers)
-			polls.add(voteUser.getPoll());
+			polls.add(voteUser.getAnswer().getPoll());
 		return polls;
 	}
 

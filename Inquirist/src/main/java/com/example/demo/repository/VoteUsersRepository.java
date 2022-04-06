@@ -11,5 +11,4 @@ import com.example.demo.model.VoteUser;
 public interface VoteUsersRepository extends CrudRepository<VoteUser, Long>
 {
 	List<VoteUser> findAllByUser(User user);
-	List<VoteUser> findAllByPoll(Poll poll);
 }
