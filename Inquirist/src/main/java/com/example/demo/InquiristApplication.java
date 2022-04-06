@@ -84,10 +84,10 @@ public class InquiristApplication
 
 			answersRepo.save(oui);
 			answersRepo.save(non);
-
-			VoteUser vu = new VoteUser(p, mat, oui);
-			VoteGuest vg = new VoteGuest(p, mat2, non);
-
+			
+			VoteUser vu = new VoteUser(mat, oui);
+			VoteGuest vg = new VoteGuest(mat2, non);
+			
 			voteusersRepo.save(vu);
 			voteguestsRepo.save(vg);
 

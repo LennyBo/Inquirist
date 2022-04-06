@@ -16,6 +16,9 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
+import com.example.demo.model.Vote;
+import com.example.demo.model.VoteGuest;
+import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
@@ -48,12 +51,16 @@ public class PollController
 
 		Object[] answers = answersRepo.findByPollId(id).toArray();
 		model.put("answers", answers);
+		model.put("vote", new Vote());
 		return "poll_detail";
 	}
 
 	@GetMapping("/{id}/remove")
 	public RedirectView remove(@PathVariable("id") long id, Map<String, Object> model)
 	{
+		
+		//verifier que la personne login à le droit
+		
 		Optional<Poll> p = pollsRepo.findById(id);
 		if (!p.isEmpty())
 		{
