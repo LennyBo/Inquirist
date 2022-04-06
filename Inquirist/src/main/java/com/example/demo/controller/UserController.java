@@ -16,11 +16,14 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.SecurityToolBox;
+import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.VoteUser;
+import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
+import com.example.demo.repository.VoteGuestsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
@@ -34,7 +37,13 @@ public class UserController
 	PollsRepository pollsRepo;
 
 	@Autowired
-	VoteUsersRepository voteusersRepository;
+	AnswersRepository answersRepo;
+
+	@Autowired
+	VoteUsersRepository voteusersRepo;
+
+	@Autowired
+	VoteGuestsRepository voteguestsRepo;
 
 	@GetMapping
 	public String users(Map<String, Object> model)
@@ -54,7 +63,7 @@ public class UserController
 	{
 		User user = usersRepo.findById(id).get();
 		model.put("user", user);
-		model.put("polls", user.getParticipatedPolls(voteusersRepository));
+		model.put("polls", user.getParticipatedPolls(voteusersRepo));
 //		model.put("polls", user.getOwnedPolls(pollsRepo));
 		return "user_detail";
 	}
@@ -66,7 +75,24 @@ public class UserController
 
 		if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
 		{
-			usersRepo.deleteById(id);
+			Optional<User> u = usersRepo.findById(id);
+			if (!u.isEmpty())
+			{
+				User user = u.get();
+
+				// FIXME Delete on CASCADE user: refactor ?
+				for (Poll poll : pollsRepo.findAllByOwner(user))
+				{
+					for (Answer answer : answersRepo.findAllByPoll(poll))
+					{
+						voteguestsRepo.deleteAllByAnswer(answer);
+						voteusersRepo.deleteAllByAnswer(answer);
+					}
+					answersRepo.deleteAllByPoll(poll);
+				}
+				pollsRepo.deleteAllByOwner(user);
+				usersRepo.delete(user);
+			}
 		}
 
 		return new RedirectView("/users");

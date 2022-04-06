@@ -12,7 +12,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.inMemoryAuthentication() // spécifie à Spring que l'authentification se fera "en mémoire"
-				.withUser("user").password("{noop}password").roles("USER"); // {noop}, pas de cryptage
+				.withUser("user").password("{noop}password").roles("ADMIN"); // {noop}, pas de cryptage
 	}
 	
 	@Override
