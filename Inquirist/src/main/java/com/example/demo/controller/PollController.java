@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.example.demo.SecurityToolBox;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
@@ -37,31 +40,44 @@ public class PollController
 	@GetMapping
 	public String polls(Map<String, Object> model)
 	{
-		model.put("polls", pollsRepo.findAll());
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
+		{
+			User user = usersRepo.findByUsername(auth.getName());
+			model.put("polls", pollsRepo.findAllByOwner(user));
+		}
+		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		{
+			model.put("polls", pollsRepo.findAll());
+		}
+
 		return "polls";
+
 	}
 
 	@GetMapping("/{id}")
 	public String detail(@PathVariable("id") long id, Map<String, Object> model)
 	{
-		model.put("poll", pollsRepo.findById(id).get());
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		Object[] answers = answersRepo.findByPollId(id).toArray();
-		model.put("answers", answers);
-		return "poll_detail";
-	}
-
-	@GetMapping("/{id}/remove")
-	public RedirectView remove(@PathVariable("id") long id, Map<String, Object> model)
-	{
-		Optional<Poll> p = pollsRepo.findById(id);
-		if (!p.isEmpty())
+		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
 		{
-			Poll po = p.get();
-			po.setOwner(null);
-			pollsRepo.delete(po);
+			// TODO Verify if the user has the the right
+			model.put("poll", pollsRepo.findById(id).get());
+
+			Object[] answers = answersRepo.findByPollId(id).toArray();
+			model.put("answers", answers);
 		}
-		return new RedirectView("/polls");
+		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		{
+			model.put("poll", pollsRepo.findById(id).get());
+
+			Object[] answers = answersRepo.findByPollId(id).toArray();
+			model.put("answers", answers);
+		}
+
+		return "poll_detail";
 	}
 
 	@GetMapping("/create")
@@ -73,8 +89,7 @@ public class PollController
 	@PostMapping("/insert")
 	public RedirectView insert(@ModelAttribute(value = "poll") Poll poll, Map<String, Object> model)
 	{
-		// modifer le owner avec la personne login sinon retouner une erreur
-		User owner = usersRepo.findById((long) 1).get();
+		User owner = usersRepo.findByUsername(auth.getName());
 		poll.setOwner(owner);
 		poll.setStartDate(new Date(System.currentTimeMillis()));
 		pollsRepo.save(poll);
@@ -89,4 +104,26 @@ public class PollController
 		return new RedirectView("/polls");
 	}
 
+	@GetMapping("/{id}/remove")
+	public RedirectView removePoll(@PathVariable("id") long id, Map<String, Object> model)
+	{
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
+		{
+			// TODO Verify if the user has the the right
+		}
+		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		{
+			Optional<Poll> p = pollsRepo.findById(id);
+			if (!p.isEmpty())
+			{
+				Poll po = p.get();
+				po.setOwner(null);
+				pollsRepo.delete(po);
+			}
+		}
+
+		return new RedirectView("/polls");
+	}
 }

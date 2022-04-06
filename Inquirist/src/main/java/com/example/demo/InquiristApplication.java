@@ -68,7 +68,7 @@ public class InquiristApplication
 			personsRepo.save(p);
 		}
 
-		User mat = new User("matthieu", "mat", "mdp", true);
+		User mat = new User("user", "mat", "mdp", true);
 		usersRepo.save(mat);
 
 		Guest mat2 = new Guest("mat2");
