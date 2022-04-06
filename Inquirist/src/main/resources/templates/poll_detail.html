@@ -11,10 +11,16 @@
 		<div th:text="${poll.description}"></div>	
 		
 		<h3>Answer :</h3>
-		<tr th:each="answer : ${answers}">
-		    <td th:text="${answer.id}"></td>
-            <td th:text="${answer.answer}"></td>
-            <br>
-		</tr>
+
+            <form th:action="@{/vote}"  method="post">
+            
+           	<tr th:each="answer : ${answers}">
+			<label th:text="${answer.answer}"></label>
+			<input type="radio" th:field="*{vote.id}" th:value=${answer.id}>
+		 <br>	
+           </tr>
+            
+                    <button >vote</button>
+            </form>
 </body>
 </html>
