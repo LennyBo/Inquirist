@@ -8,9 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 
 import com.example.demo.model.Answer;
-import com.example.demo.model.Category;
 import com.example.demo.model.Guest;
-import com.example.demo.model.Person;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.VoteGuest;
@@ -18,7 +16,6 @@ import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.CategoriesRepository;
 import com.example.demo.repository.GuestsRepository;
-import com.example.demo.repository.PersonsRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
 import com.example.demo.repository.VoteGuestsRepository;
@@ -28,9 +25,6 @@ import com.example.demo.repository.VoteUsersRepository;
 @Configuration
 public class InquiristApplication
 {
-	@Autowired
-	PersonsRepository personsRepo;
-
 	@Autowired
 	CategoriesRepository categoriesRepo;
 
@@ -60,15 +54,7 @@ public class InquiristApplication
 	@PostConstruct
 	public void init()
 	{
-		for (int i = 0; i < 10; i++)
-		{
-			Category c = new Category("Categorie" + i);
-			categoriesRepo.save(c);
-			Person p = new Person("Chevre" + i, "Sebastien" + i, c);
-			personsRepo.save(p);
-		}
-
-		User mat = new User("matthieu", "mat", "mdp", true);
+		User mat = new User("user", "mat", "mdp", true);
 		usersRepo.save(mat);
 
 		Guest mat2 = new Guest("mat2");

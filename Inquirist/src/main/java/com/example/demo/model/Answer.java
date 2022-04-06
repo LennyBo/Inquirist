@@ -21,7 +21,6 @@ public class Answer
 	@JoinColumn(name = "pollId")
 	private Poll poll;
 
-
 	private String answer;
 
 	public Answer(Poll poll, String answer)

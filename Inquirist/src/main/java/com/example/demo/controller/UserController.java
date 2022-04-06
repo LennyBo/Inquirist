@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.example.demo.SecurityToolBox;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.VoteUser;
+import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
+import com.example.demo.repository.VoteGuestsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
@@ -30,17 +36,27 @@ public class UserController
 
 	@Autowired
 	PollsRepository pollsRepo;
-	
+
 	@Autowired
-	VoteUsersRepository voteusersRepository;
+	AnswersRepository answersRepo;
+
+	@Autowired
+	VoteUsersRepository voteusersRepo;
+
+	@Autowired
+	VoteGuestsRepository voteguestsRepo;
 
 	@GetMapping
-	public ModelAndView users()
+	public String users(Map<String, Object> model)
 	{
-		// TODO only if admin
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("users", usersRepo.findAll());
-		return mav;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		{
+			model.put("users", usersRepo.findAll());
+		}
+
+		return "users";
 	}
 
 	@GetMapping("/{id}")
@@ -48,6 +64,7 @@ public class UserController
 	{
 		User user = usersRepo.findById(id).get();
 		model.put("user", user);
+		
 		List<VoteUser> votes = voteusersRepository.findAllByUser(user);
 		List<Poll> polls = new ArrayList<Poll>();
 		for(VoteUser vote : votes)
@@ -60,11 +77,33 @@ public class UserController
 		return "user_detail";
 	}
 
-	@GetMapping("/{id}/remove")
-	public RedirectView delete(@PathVariable("id") long id, Map<String, Object> model)
+	@GetMapping("{id}/remove")
+	public RedirectView deleteUser(@PathVariable("id") long id, Map<String, Object> model)
 	{
-		// TODO only if admin
-		usersRepo.deleteById(id);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		{
+			Optional<User> u = usersRepo.findById(id);
+			if (!u.isEmpty())
+			{
+				User user = u.get();
+
+				// FIXME Delete on CASCADE user: refactor ?
+				for (Poll poll : pollsRepo.findAllByOwner(user))
+				{
+					for (Answer answer : answersRepo.findAllByPoll(poll))
+					{
+						voteguestsRepo.deleteAllByAnswer(answer);
+						voteusersRepo.deleteAllByAnswer(answer);
+					}
+					answersRepo.deleteAllByPoll(poll);
+				}
+				pollsRepo.deleteAllByOwner(user);
+				usersRepo.delete(user);
+			}
+		}
+
 		return new RedirectView("/users");
 	}
 }
