@@ -89,16 +89,22 @@ public class PollController
 	@PostMapping("/insert")
 	public RedirectView insert(@ModelAttribute(value = "poll") Poll poll, Map<String, Object> model)
 	{
-		User owner = usersRepo.findByUsername(auth.getName());
-		poll.setOwner(owner);
-		poll.setStartDate(new Date(System.currentTimeMillis()));
-		pollsRepo.save(poll);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		String[] answers = poll.getAnswersStringList();
-		for (int i = 0; i < answers.length; i++)
+		if (auth != null)
 		{
-			Answer answer = new Answer(poll, answers[i]);
-			answersRepo.save(answer);
+			User owner = usersRepo.findByUsername(auth.getName());
+
+			poll.setOwner(owner);
+			poll.setStartDate(new Date(System.currentTimeMillis()));
+			pollsRepo.save(poll);
+
+			String[] answers = poll.getAnswersStringList();
+			for (int i = 0; i < answers.length; i++)
+			{
+				Answer answer = new Answer(poll, answers[i]);
+				answersRepo.save(answer);
+			}
 		}
 
 		return new RedirectView("/polls");
@@ -111,7 +117,17 @@ public class PollController
 
 		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
 		{
-			// TODO Verify if the user has the the right
+			Optional<Poll> p = pollsRepo.findById(id);
+			if (!p.isEmpty())
+			{
+				Poll po = p.get();
+				User user = usersRepo.findByUsername(auth.getName());
+
+				if (po.getOwner().getId() == user.getId())
+				{
+					pollsRepo.delete(po);
+				}
+			}
 		}
 		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
 		{
