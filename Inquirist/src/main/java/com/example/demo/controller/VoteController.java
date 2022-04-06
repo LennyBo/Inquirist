@@ -22,38 +22,41 @@ import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
 @RequestMapping("/vote")
-public class VoteController {
+public class VoteController
+{
 
 	@Autowired
 	UsersRepository usersRepo;
-	
+
 	@Autowired
 	AnswersRepository answersRepo;
-	
+
 	@Autowired
 	VoteUsersRepository voteUserRepo;
-	
+
 	@Autowired
 	VoteGuestsRepository voteGuestRepo;
-	
+
 	@PostMapping
-	public String vote(@ModelAttribute(value="vote") Vote vote, Map<String, Object> model) {
+	public String vote(@ModelAttribute(value = "vote") Vote vote, Map<String, Object> model)
+	{
 		System.out.println(vote);
 		Answer answer = answersRepo.findById(vote.getId()).get();
-		
-		
-		
-		//crée le vote en fonction du user ou du guest
-		if(true) {
-			//mettre l'utilsateur login
+
+		// crée le vote en fonction du user ou du guest
+		if (true)
+		{
+			// mettre l'utilsateur login
 			User user = usersRepo.findById((long) 1).get();
-			VoteUser newVote = new VoteUser(user ,answer);
+			VoteUser newVote = new VoteUser(user, answer);
 			voteUserRepo.save(newVote);
-			
-		}else {
-			
+
+		}
+		else
+		{
+
 		}
 		return "index";
 	}
-	
+
 }

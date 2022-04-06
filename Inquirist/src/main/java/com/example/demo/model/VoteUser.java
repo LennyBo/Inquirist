@@ -17,7 +17,6 @@ public class VoteUser
 	@Id
 	private Long id;
 
-
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;
@@ -47,7 +46,6 @@ public class VoteUser
 	{
 		this.id = id;
 	}
-
 
 	public User getUser()
 	{

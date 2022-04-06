@@ -113,8 +113,8 @@ public class PollController
 			poll.setOwner(owner);
 			poll.setStartDate(new Date(System.currentTimeMillis()));
 			String[] answers = poll.getAnswersStringList();
-			
-			if(Poll.Valid(poll) && answers.length > 1)
+
+			if (Poll.Valid(poll) && answers.length > 1)
 			{
 				pollsRepo.save(poll);
 				for (int i = 0; i < answers.length; i++)
@@ -132,38 +132,38 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
+		Optional<Poll> p = pollsRepo.findById(id);
+		if (!p.isEmpty())
 		{
-			Optional<Poll> p = pollsRepo.findById(id);
-			if (!p.isEmpty())
+			Poll poll = p.get();
+
+			if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
 			{
-				Poll poll = p.get();
 				User user = usersRepo.findByUsername(auth.getName());
 
 				if (poll.getOwner().getId() == user.getId())
 				{
-					// FIXME Delete on CASCADE answers: refactor ?
-					for (Answer answer : answersRepo.findAllByPoll(poll))
-					{
-						voteguestsRepo.deleteAllByAnswer(answer);
-						voteusersRepo.deleteAllByAnswer(answer);
-					}
-					answersRepo.deleteAllByPoll(poll);
-					pollsRepo.delete(poll);
+					deletePoll(poll);
 				}
 			}
-		}
-		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
-		{
-			Optional<Poll> p = pollsRepo.findById(id);
-			if (!p.isEmpty())
+			else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
 			{
-				Poll po = p.get();
-				po.setOwner(null);
-				pollsRepo.delete(po);
+				deletePoll(poll);
 			}
 		}
 
 		return new RedirectView("/polls");
+	}
+
+	private void deletePoll(Poll poll)
+	{
+		// FIXME Delete on CASCADE answers: refactor ?
+		for (Answer answer : answersRepo.findAllByPoll(poll))
+		{
+			voteguestsRepo.deleteAllByAnswer(answer);
+			voteusersRepo.deleteAllByAnswer(answer);
+		}
+		answersRepo.deleteAllByPoll(poll);
+		pollsRepo.delete(poll);
 	}
 }

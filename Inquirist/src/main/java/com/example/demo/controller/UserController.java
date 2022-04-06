@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.SecurityToolBox;
@@ -64,10 +62,10 @@ public class UserController
 	{
 		User user = usersRepo.findById(id).get();
 		model.put("user", user);
-		
-		List<VoteUser> votes = voteusersRepository.findAllByUser(user);
+
+		List<VoteUser> votes = voteusersRepo.findAllByUser(user);
 		List<Poll> polls = new ArrayList<Poll>();
-		for(VoteUser vote : votes)
+		for (VoteUser vote : votes)
 		{
 			polls.add(vote.getAnswer().getPoll());
 		}

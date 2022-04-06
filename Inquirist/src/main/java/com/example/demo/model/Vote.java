@@ -1,21 +1,27 @@
 package com.example.demo.model;
 
-public class Vote {
+public class Vote
+{
 	private long id;
+
 	public Vote()
 	{
-		
+
 	}
-	public long getId() {
+
+	public long getId()
+	{
 		return id;
 	}
-	public void setId(long id) {
+
+	public void setId(long id)
+	{
 		this.id = id;
 	}
+
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "Vote [id=" + id + "]";
 	}
-	
-
 }
