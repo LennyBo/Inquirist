@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,12 +23,13 @@ import com.example.demo.model.User;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
+import com.example.demo.repository.VoteGuestsRepository;
+import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
 @RequestMapping("/polls")
 public class PollController
 {
-
 	@Autowired
 	PollsRepository pollsRepo;
 
@@ -36,6 +38,12 @@ public class PollController
 
 	@Autowired
 	UsersRepository usersRepo;
+
+	@Autowired
+	VoteUsersRepository voteusersRepo;
+
+	@Autowired
+	VoteGuestsRepository voteguestsRepo;
 
 	@GetMapping
 	public String polls(Map<String, Object> model)
@@ -66,14 +74,14 @@ public class PollController
 			// TODO Verify if the user has the the right
 			model.put("poll", pollsRepo.findById(id).get());
 
-			Object[] answers = answersRepo.findByPollId(id).toArray();
+			Object[] answers = answersRepo.findAllByPollId(id).toArray();
 			model.put("answers", answers);
 		}
 		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
 		{
 			model.put("poll", pollsRepo.findById(id).get());
 
-			Object[] answers = answersRepo.findByPollId(id).toArray();
+			Object[] answers = answersRepo.findAllByPollId(id).toArray();
 			model.put("answers", answers);
 		}
 
@@ -120,12 +128,19 @@ public class PollController
 			Optional<Poll> p = pollsRepo.findById(id);
 			if (!p.isEmpty())
 			{
-				Poll po = p.get();
+				Poll poll = p.get();
 				User user = usersRepo.findByUsername(auth.getName());
 
-				if (po.getOwner().getId() == user.getId())
+				if (poll.getOwner().getId() == user.getId())
 				{
-					pollsRepo.delete(po);
+					// FIXME Delete on CASCADE answers: refactor ?
+					for (Answer answer : answersRepo.findAllByPoll(poll))
+					{
+						voteguestsRepo.deleteAllByAnswer(answer);
+						voteusersRepo.deleteAllByAnswer(answer);
+					}
+					answersRepo.deleteAllByPoll(poll);
+					pollsRepo.delete(poll);
 				}
 			}
 		}
