@@ -6,4 +6,5 @@ import com.example.demo.model.User;
 
 public interface UsersRepository extends CrudRepository<User, Long>
 {
+	User findByUsername(String nomUtilisateur);
 }

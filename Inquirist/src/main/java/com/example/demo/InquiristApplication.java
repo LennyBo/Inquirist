@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.demo.model.Answer;
 import com.example.demo.model.Category;
@@ -28,6 +30,8 @@ import com.example.demo.repository.VoteUsersRepository;
 @Configuration
 public class InquiristApplication
 {
+	
+	
 	@Autowired
 	PersonsRepository personsRepo;
 
@@ -51,15 +55,23 @@ public class InquiristApplication
 
 	@Autowired
 	VoteGuestsRepository voteguestsRepo;
+	
 
 	public static void main(String[] args)
 	{
 		SpringApplication.run(InquiristApplication.class, args);
 	}
+	
+	/*@Bean
+	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+	  return new BCryptPasswordEncoder();
+	}*/
+
 
 	@PostConstruct
 	public void init()
 	{
+		PasswordEncoder encoder = new Encoder().passwordEncoder();
 		for (int i = 0; i < 10; i++)
 		{
 			Category c = new Category("Categorie" + i);
@@ -68,7 +80,7 @@ public class InquiristApplication
 			personsRepo.save(p);
 		}
 
-		User mat = new User("matthieu", "mat", "mdp", true);
+		User mat = new User("matthieu", "mat", encoder.encode("password"), true);
 		usersRepo.save(mat);
 
 		Guest mat2 = new Guest("mat2");
