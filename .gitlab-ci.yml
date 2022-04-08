@@ -64,7 +64,7 @@ deploy_ssh:
   only:
     - main
   tags:
-    - InquiristRunner
+    - InquiristRunner 
   # when: manual
 
 after_script:
