@@ -10,9 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.demo.model.Answer;
-import com.example.demo.model.Category;
 import com.example.demo.model.Guest;
-import com.example.demo.model.Person;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.VoteGuest;
@@ -20,7 +18,6 @@ import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.CategoriesRepository;
 import com.example.demo.repository.GuestsRepository;
-import com.example.demo.repository.PersonsRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
 import com.example.demo.repository.VoteGuestsRepository;
@@ -32,9 +29,6 @@ public class InquiristApplication
 {
 	
 	
-	@Autowired
-	PersonsRepository personsRepo;
-
 	@Autowired
 	CategoriesRepository categoriesRepo;
 
@@ -71,6 +65,7 @@ public class InquiristApplication
 	@PostConstruct
 	public void init()
 	{
+<<<<<<< HEAD
 		PasswordEncoder encoder = new Encoder().passwordEncoder();
 		for (int i = 0; i < 10; i++)
 		{
@@ -81,6 +76,9 @@ public class InquiristApplication
 		}
 
 		User mat = new User("matthieu", "mat", encoder.encode("password"), true);
+=======
+		User mat = new User("user", "mat", "mdp", true);
+>>>>>>> 07d7729cdeb36ba53eb779925b40185abd0ca8d8
 		usersRepo.save(mat);
 
 		Guest mat2 = new Guest("mat2");
@@ -96,10 +94,10 @@ public class InquiristApplication
 
 			answersRepo.save(oui);
 			answersRepo.save(non);
-
-			VoteUser vu = new VoteUser(p, mat, oui);
-			VoteGuest vg = new VoteGuest(p, mat2, non);
-
+			
+			VoteUser vu = new VoteUser(mat, oui);
+			VoteGuest vg = new VoteGuest(mat2, non);
+			
 			voteusersRepo.save(vu);
 			voteguestsRepo.save(vg);
 

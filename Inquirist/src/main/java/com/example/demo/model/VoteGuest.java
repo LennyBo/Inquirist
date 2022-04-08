@@ -18,10 +18,6 @@ public class VoteGuest
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "pollId")
-	private Poll poll;
-
-	@ManyToOne
 	@JoinColumn(name = "guestId")
 	private Guest guest;
 
@@ -29,10 +25,9 @@ public class VoteGuest
 	@JoinColumn(name = "answerId")
 	private Answer answer;
 
-	public VoteGuest(Poll poll, Guest guest, Answer answer)
+	public VoteGuest(Guest guest, Answer answer)
 	{
 		super();
-		this.poll = poll;
 		this.guest = guest;
 		this.answer = answer;
 	}
@@ -41,4 +36,41 @@ public class VoteGuest
 	{
 		super();
 	}
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	public Guest getGuest()
+	{
+		return guest;
+	}
+
+	public void setGuest(Guest guest)
+	{
+		this.guest = guest;
+	}
+
+	public Answer getAnswer()
+	{
+		return answer;
+	}
+
+	public void setAnswer(Answer answer)
+	{
+		this.answer = answer;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "VoteGuest [id=" + id + ", guest=" + guest + ", answer=" + answer + "]";
+	}
+
 }

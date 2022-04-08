@@ -21,7 +21,6 @@ public class Answer
 	@JoinColumn(name = "pollId")
 	private Poll poll;
 
-
 	private String answer;
 
 	public Answer(Poll poll, String answer)
@@ -37,30 +36,38 @@ public class Answer
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return "Answer [id=" + id + ", poll=" + poll + ", answer=" + answer + "]";
 	}
-	public Long getId() {
+
+	public Long getId()
+	{
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Long id)
+	{
 		this.id = id;
 	}
 
-	public Poll getPoll() {
+	public Poll getPoll()
+	{
 		return poll;
 	}
 
-	public void setPoll(Poll poll) {
+	public void setPoll(Poll poll)
+	{
 		this.poll = poll;
 	}
 
-	public String getAnswer() {
+	public String getAnswer()
+	{
 		return answer;
 	}
 
-	public void setAnswer(String answer) {
+	public void setAnswer(String answer)
+	{
 		this.answer = answer;
 	}
 }

@@ -18,10 +18,6 @@ public class VoteUser
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "pollId")
-	private Poll poll;
-
-	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;
 
@@ -29,10 +25,9 @@ public class VoteUser
 	@JoinColumn(name = "answerId")
 	private Answer answer;
 
-	public VoteUser(Poll poll, User user, Answer answer)
+	public VoteUser(User user, Answer answer)
 	{
 		super();
-		this.poll = poll;
 		this.user = user;
 		this.answer = answer;
 	}
@@ -50,16 +45,6 @@ public class VoteUser
 	public void setId(Long id)
 	{
 		this.id = id;
-	}
-
-	public Poll getPoll()
-	{
-		return poll;
-	}
-
-	public void setPoll(Poll poll)
-	{
-		this.poll = poll;
 	}
 
 	public User getUser()

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 @RequestMapping("/")
-public class MainController {
-
+public class MainController
+{
 	@GetMapping
 	public String index()
 	{
@@ -22,4 +22,3 @@ public class MainController {
 		return "error";
 	}*/
 }
-
