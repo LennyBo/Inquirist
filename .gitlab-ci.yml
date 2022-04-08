@@ -64,7 +64,7 @@ deploy_ssh:
   only:
     - main
   tags:
-    - alpine-docker
+    - InquiristRunner
   # when: manual
 
 after_script:
