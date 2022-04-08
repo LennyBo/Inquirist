@@ -3,20 +3,24 @@ package com.example.demo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.controller.MainController;
 import com.example.demo.controller.PollController;
+import com.example.demo.model.Poll;
 
 @SpringBootTest
 class InquiristApplicationTests {
 
-	
-	
+	  @Autowired
+	  private ApplicationContext context;
+
 	@Test
 	void contextLoads() {
 		//assertThat(pollController).isNotNull();
