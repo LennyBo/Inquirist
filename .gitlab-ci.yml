@@ -53,7 +53,7 @@ before_script:
 deploy_ssh:
   stage: deploy
   before_script:
-    - eval $(ssh-agent -s)
+    - ssh
     - apt-get install openssh-client -y
     - echo "$SSH_PRIVATE_KEY" 
   script:
