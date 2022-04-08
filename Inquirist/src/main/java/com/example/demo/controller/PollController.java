@@ -64,7 +64,6 @@ public class PollController
 		}
 
 		return "polls";
-
 	}
 
 	@GetMapping("/{id}")
@@ -98,7 +97,14 @@ public class PollController
 	@GetMapping("/create")
 	public String create(@ModelAttribute(value = "poll") Poll poll, Map<String, Object> model)
 	{
-		return "poll_create";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (SecurityToolBox.containsRole(auth, "ROLE_USER") || SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		{
+			return "poll_create";
+		}
+		
+		return "error";
 	}
 
 	@PostMapping("/insert")
@@ -106,7 +112,7 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (auth != null)
+		if (SecurityToolBox.containsRole(auth, "ROLE_USER") || SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
 		{
 			User owner = usersRepo.findByUsername(auth.getName());
 

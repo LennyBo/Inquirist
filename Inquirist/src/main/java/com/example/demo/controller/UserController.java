@@ -60,18 +60,22 @@ public class UserController
 	@GetMapping("/{id}")
 	public String detail(@PathVariable("id") long id, Map<String, Object> model)
 	{
-		User user = usersRepo.findById(id).get();
-		model.put("user", user);
-
-		List<VoteUser> votes = voteusersRepo.findAllByUser(user);
-		List<Poll> polls = new ArrayList<Poll>();
-		for (VoteUser vote : votes)
+		Optional<User> u = usersRepo.findById(id);
+		if (!u.isEmpty())
 		{
-			polls.add(vote.getAnswer().getPoll());
+			User user = u.get();
+
+			model.put("user", user);
+
+			List<VoteUser> votes = voteusersRepo.findAllByUser(user);
+			List<Poll> polls = new ArrayList<Poll>();
+			for (VoteUser vote : votes)
+			{
+				polls.add(vote.getAnswer().getPoll());
+			}
+			model.put("polls", polls);
 		}
-		model.put("polls", polls);
-//		model.put("polls", user.getParticipatedPolls(voteusersRepository));
-//		model.put("polls", user.getOwnedPolls(pollsRepo));
+
 		return "user_detail";
 	}
 
@@ -86,22 +90,26 @@ public class UserController
 			if (!u.isEmpty())
 			{
 				User user = u.get();
-
-				// FIXME Delete on CASCADE user: refactor ?
-				for (Poll poll : pollsRepo.findAllByOwner(user))
-				{
-					for (Answer answer : answersRepo.findAllByPoll(poll))
-					{
-						voteguestsRepo.deleteAllByAnswer(answer);
-						voteusersRepo.deleteAllByAnswer(answer);
-					}
-					answersRepo.deleteAllByPoll(poll);
-				}
-				pollsRepo.deleteAllByOwner(user);
-				usersRepo.delete(user);
+				deleteUser(user);
 			}
 		}
 
 		return new RedirectView("/users");
+	}
+
+	private void deleteUser(User user)
+	{
+		// FIXME Delete on CASCADE user: refactor ?
+		for (Poll poll : pollsRepo.findAllByOwner(user))
+		{
+			for (Answer answer : answersRepo.findAllByPoll(poll))
+			{
+				voteguestsRepo.deleteAllByAnswer(answer);
+				voteusersRepo.deleteAllByAnswer(answer);
+			}
+			answersRepo.deleteAllByPoll(poll);
+		}
+		pollsRepo.deleteAllByOwner(user);
+		usersRepo.delete(user);
 	}
 }

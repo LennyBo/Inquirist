@@ -76,7 +76,6 @@ public class InquiristApplication
 			
 			voteusersRepo.save(vu);
 			voteguestsRepo.save(vg);
-
 		}
 
 		usersRepo.save(mat);
