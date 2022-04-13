@@ -15,4 +15,6 @@ public interface VoteUsersRepository extends CrudRepository<VoteUser, Long>
 
 	@Transactional
 	void deleteAllByAnswer(Answer answer);
+	
+	List<VoteUser> findByAnswer(Answer answer);
 }

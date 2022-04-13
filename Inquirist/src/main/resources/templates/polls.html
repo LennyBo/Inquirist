@@ -41,6 +41,8 @@
 				<td><a th:href="@{/polls/{id}/remove(id=${poll.id})}">Delete</a>
 				</td>
 				<td><a th:href="@{/polls/{id}(id=${poll.id})}">Detail</a></td>
+				<td><a th:href="@{/polls/result/{id}(id=${poll.id})}">Result</a></td>
+				
 			</tr>
 		</tbody>
 	</table>

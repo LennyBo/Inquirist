@@ -51,6 +51,7 @@ public class PollController
 	@GetMapping
 	public String polls(Map<String, Object> model)
 	{
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
@@ -109,7 +110,11 @@ public class PollController
 		if (auth != null)
 		{
 			User owner = usersRepo.findByUsername(auth.getName());
-
+			
+			if(owner == null) {
+				owner = usersRepo.findByUsername("matthieu");
+			}
+			
 			poll.setOwner(owner);
 			poll.setStartDate(new Date(System.currentTimeMillis()));
 			String[] answers = poll.getAnswersStringList();
@@ -154,6 +159,22 @@ public class PollController
 
 		return new RedirectView("/polls");
 	}
+	
+	@GetMapping("/result/{id}")
+	public String resultPoll(@PathVariable("id") long id, Map<String, Object> model)
+	{
+		model.put("poll", pollsRepo.findById(id).get());
+		List<Answer> answers = answersRepo.findAllByPollId(id);
+		for (Answer answer : answers)
+		{
+			answer.setNbVote(numberOfVoteForAnswer(answer));
+		}
+		model.put("answers", answers.toArray());
+		
+		
+		
+		return "poll_result";
+	}
 
 	private void deletePoll(Poll poll)
 	{
@@ -165,5 +186,13 @@ public class PollController
 		}
 		answersRepo.deleteAllByPoll(poll);
 		pollsRepo.delete(poll);
+	}
+	
+	private int numberOfVoteForAnswer(Answer answer)
+	{
+		int i=0;
+		i+=voteusersRepo.findByAnswer(answer).size();
+		i+=voteguestsRepo.findByAnswer(answer).size();
+		return i;
 	}
 }

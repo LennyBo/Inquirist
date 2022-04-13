@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
@@ -38,7 +39,7 @@ public class VoteController
 	VoteGuestsRepository voteGuestRepo;
 
 	@PostMapping
-	public String vote(@ModelAttribute(value = "vote") Vote vote, Map<String, Object> model)
+	public RedirectView vote(@ModelAttribute(value = "vote") Vote vote, Map<String, Object> model)
 	{
 		System.out.println(vote);
 		Answer answer = answersRepo.findById(vote.getId()).get();
@@ -56,7 +57,7 @@ public class VoteController
 		{
 
 		}
-		return "index";
+		return new RedirectView("/polls/result/"+answer.getPoll().getId());
 	}
 
 }

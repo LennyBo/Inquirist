@@ -22,6 +22,7 @@ public class Answer
 	private Poll poll;
 
 	private String answer;
+	private int nbVote;
 
 	public Answer(Poll poll, String answer)
 	{
@@ -38,7 +39,7 @@ public class Answer
 	@Override
 	public String toString()
 	{
-		return "Answer [id=" + id + ", poll=" + poll + ", answer=" + answer + "]";
+		return "Answer [id=" + id + ", poll=" + poll + ", answer=" + answer + ", nbVote="+ nbVote  + "]";
 	}
 
 	public Long getId()
@@ -69,5 +70,13 @@ public class Answer
 	public void setAnswer(String answer)
 	{
 		this.answer = answer;
+	}
+
+	public int getNbVote() {
+		return nbVote;
+	}
+
+	public void setNbVote(int nbVote) {
+		this.nbVote = nbVote;
 	}
 }
