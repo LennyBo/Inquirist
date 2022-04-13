@@ -53,7 +53,7 @@ before_script:
 deploy_ssh:
   stage: deploy
   before_script:
-    - ping www.google.ch
+    - whereami
     - eval $(ssh-agent -s)
     - apt-get install openssh-client -y
     - echo "$SSH_PRIVATE_KEY" 
