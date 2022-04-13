@@ -1,16 +1,21 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -45,6 +50,7 @@ public class UserController
 	VoteGuestsRepository voteguestsRepo;
 
 	@GetMapping
+	@PreAuthorize("ROLE_ADMIN")
 	public String users(Map<String, Object> model)
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -77,6 +83,29 @@ public class UserController
 		}
 
 		return "user_detail";
+	}
+
+	@GetMapping("/create")
+	public String create(@ModelAttribute(value = "user") User user, Map<String, Object> model)
+	{
+		model.put("user", new User());
+		return "user_create";
+	}
+
+	@PostMapping("/insert")
+	public RedirectView insert(@ModelAttribute(value = "user") User user, Map<String, Object> model)
+	{
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		
+		String encodedPassword = passwordEncoder.encode(user.getPassword());
+		user.setPassword(encodedPassword);
+		
+		String encodedPasswordConfirm = passwordEncoder.encode(user.getPasswordConfirm());
+		user.setPassword(encodedPasswordConfirm);
+
+		usersRepo.save(user);
+
+		return new RedirectView("/polls");
 	}
 
 	@GetMapping("{id}/remove")

@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -21,8 +20,6 @@ import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.Vote;
-import com.example.demo.model.VoteGuest;
-import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
@@ -98,12 +95,12 @@ public class PollController
 	public String create(@ModelAttribute(value = "poll") Poll poll, Map<String, Object> model)
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		
+
 		if (SecurityToolBox.containsRole(auth, "ROLE_USER") || SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
 		{
 			return "poll_create";
 		}
-		
+
 		return "error";
 	}
 

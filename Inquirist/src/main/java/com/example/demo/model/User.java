@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.beans.Transient;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,9 +19,13 @@ import lombok.Data;
 @Entity
 public class User
 {
-	@Column(unique = true)
+	@Column(nullable = false, unique = true)
 	private String username;
+	@Column(nullable = false)
 	private String password;
+	@Column(nullable = false)
+	private String passwordConfirm;
+	@Column(nullable = false)
 	private String name;
 	private Boolean isAdmin;
 
@@ -28,13 +33,13 @@ public class User
 	@Id
 	private Long id;
 
-	public User(String username, String name, String password, Boolean isAdmin)
+	public User(String username, String name, String password, boolean isAdmin)
 	{
 		super();
 		this.username = username;
 		this.password = password;
 		this.name = name;
-		this.isAdmin = isAdmin;
+		this.isAdmin = false;
 	}
 
 	public User()
@@ -74,6 +79,17 @@ public class User
 	public void setPassword(String password)
 	{
 		this.password = password;
+	}
+
+	@Transient
+	public String getPasswordConfirm()
+	{
+		return passwordConfirm;
+	}
+
+	public void setPasswordConfirm(String passwordConfirm)
+	{
+		this.passwordConfirm = passwordConfirm;
 	}
 
 	public String getName()

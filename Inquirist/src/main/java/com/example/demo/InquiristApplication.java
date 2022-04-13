@@ -5,14 +5,10 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.example.demo.model.Answer;
-import com.example.demo.model.Guest;
-import com.example.demo.model.Poll;
-import com.example.demo.model.User;
-import com.example.demo.model.VoteGuest;
-import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.CategoriesRepository;
 import com.example.demo.repository.GuestsRepository;
@@ -46,6 +42,12 @@ public class InquiristApplication
 	@Autowired
 	VoteGuestsRepository voteguestsRepo;
 
+	@Bean
+	public BCryptPasswordEncoder bCryptPasswordEncoder()
+	{
+		return new BCryptPasswordEncoder();
+	}
+
 	public static void main(String[] args)
 	{
 		SpringApplication.run(InquiristApplication.class, args);
@@ -54,30 +56,31 @@ public class InquiristApplication
 	@PostConstruct
 	public void init()
 	{
-		User mat = new User("user", "mat", "mdp", true);
-		usersRepo.save(mat);
-
-		Guest mat2 = new Guest("mat2");
-		guestsRepo.save(mat2);
-
-		for (int i = 0; i < 5; i++)
-		{
-			Poll p = new Poll("salut", "sondage" + i, mat);
-			pollsRepo.save(p);
-
-			Answer oui = new Answer(p, "oui");
-			Answer non = new Answer(p, "non");
-
-			answersRepo.save(oui);
-			answersRepo.save(non);
-			
-			VoteUser vu = new VoteUser(mat, oui);
-			VoteGuest vg = new VoteGuest(mat2, non);
-			
-			voteusersRepo.save(vu);
-			voteguestsRepo.save(vg);
-		}
-
-		usersRepo.save(mat);
+//		User mat = new User("user", "mat", "mdp", true);
+//		mat.setPasswordConfirm(null);
+//		usersRepo.save(mat);
+//
+//		Guest mat2 = new Guest("mat2");
+//		guestsRepo.save(mat2);
+//
+//		for (int i = 0; i < 5; i++)
+//		{
+//			Poll p = new Poll("salut", "sondage" + i, mat);
+//			pollsRepo.save(p);
+//
+//			Answer oui = new Answer(p, "oui");
+//			Answer non = new Answer(p, "non");
+//
+//			answersRepo.save(oui);
+//			answersRepo.save(non);
+//			
+//			VoteUser vu = new VoteUser(mat, oui);
+//			VoteGuest vg = new VoteGuest(mat2, non);
+//			
+//			voteusersRepo.save(vu);
+//			voteguestsRepo.save(vg);
+//		}
+//
+//		usersRepo.save(mat);
 	}
 }
