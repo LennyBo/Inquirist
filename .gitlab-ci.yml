@@ -65,6 +65,7 @@ deploy_ssh:
     - main
   tags:
     - alpine-docker 
+    
   # when: manual
 
 after_script:
