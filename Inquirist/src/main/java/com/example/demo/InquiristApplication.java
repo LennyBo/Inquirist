@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.demo.model.Answer;
+import com.example.demo.model.Category;
 import com.example.demo.model.Guest;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
@@ -65,20 +66,14 @@ public class InquiristApplication
 	@PostConstruct
 	public void init()
 	{
-<<<<<<< HEAD
 		PasswordEncoder encoder = new Encoder().passwordEncoder();
 		for (int i = 0; i < 10; i++)
 		{
 			Category c = new Category("Categorie" + i);
 			categoriesRepo.save(c);
-			Person p = new Person("Chevre" + i, "Sebastien" + i, c);
-			personsRepo.save(p);
 		}
 
 		User mat = new User("matthieu", "mat", encoder.encode("password"), true);
-=======
-		User mat = new User("user", "mat", "mdp", true);
->>>>>>> 07d7729cdeb36ba53eb779925b40185abd0ca8d8
 		usersRepo.save(mat);
 
 		Guest mat2 = new Guest("mat2");
