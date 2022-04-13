@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,19 +29,24 @@ public class User
 	private String passwordConfirm;
 	@Column(nullable = false)
 	private String name;
-	private Boolean isAdmin;
+
+	@Enumerated(EnumType.ORDINAL)
+	private Role role;
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Long id;
 
-	public User(String username, String name, String password, boolean isAdmin)
+	public User(String username, String name, String password, String passwordConfirm, Role role)
 	{
 		super();
 		this.username = username;
 		this.password = password;
+		this.passwordConfirm = passwordConfirm;
 		this.name = name;
-		this.isAdmin = false;
+		this.role = role;
+
+		// TODO encrypt password
 	}
 
 	public User()
@@ -60,6 +67,8 @@ public class User
 			polls.add(voteUser.getAnswer().getPoll());
 		return polls;
 	}
+
+	/* --- Getters & Setters --- */
 
 	public String getUsername()
 	{
@@ -102,14 +111,14 @@ public class User
 		this.name = name;
 	}
 
-	public Boolean getIsAdmin()
+	public Role getRole()
 	{
-		return isAdmin;
+		return role;
 	}
 
-	public void setIsAdmin(Boolean isAdmin)
+	public void setRole(Role role)
 	{
-		this.isAdmin = isAdmin;
+		this.role = role;
 	}
 
 	public Long getId()

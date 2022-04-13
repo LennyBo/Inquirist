@@ -37,6 +37,8 @@ public class VoteUser
 		super();
 	}
 
+	/* --- Getters & Setters --- */
+
 	public Long getId()
 	{
 		return id;

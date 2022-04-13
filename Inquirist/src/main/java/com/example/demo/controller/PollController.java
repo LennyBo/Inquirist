@@ -23,7 +23,6 @@ import com.example.demo.model.Vote;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
-import com.example.demo.repository.VoteGuestsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
@@ -41,9 +40,6 @@ public class PollController
 
 	@Autowired
 	VoteUsersRepository voteusersRepo;
-
-	@Autowired
-	VoteGuestsRepository voteguestsRepo;
 
 	@GetMapping
 	public String polls(Map<String, Object> model)
@@ -96,7 +92,7 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_USER") || SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		if (SecurityToolBox.containsRole(auth, "USER") || SecurityToolBox.containsRole(auth, "ADMIN"))
 		{
 			return "poll_create";
 		}
@@ -163,7 +159,6 @@ public class PollController
 		// FIXME Delete on CASCADE answers: refactor ?
 		for (Answer answer : answersRepo.findAllByPoll(poll))
 		{
-			voteguestsRepo.deleteAllByAnswer(answer);
 			voteusersRepo.deleteAllByAnswer(answer);
 		}
 		answersRepo.deleteAllByPoll(poll);

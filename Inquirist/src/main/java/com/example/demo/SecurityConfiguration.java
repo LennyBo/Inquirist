@@ -33,9 +33,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 		http.csrf().disable(); // FIXME
 		http.headers().frameOptions().disable(); // FIXME
 
-		http.authorizeRequests().antMatchers("/login", "/register").permitAll().antMatchers("/users").authenticated()
-				// .antMatchers("/polls").authenticated()
-				.and().formLogin().and().logout().logoutSuccessUrl("/register");
+		http.authorizeRequests() //
+				.antMatchers("/login", "/register").permitAll() //
+				.antMatchers("/users").authenticated() //
+				.antMatchers("/polls").authenticated() //
+				.and().formLogin()//
+				.and().logout().logoutSuccessUrl("/register");
 	}
 
 	@Bean

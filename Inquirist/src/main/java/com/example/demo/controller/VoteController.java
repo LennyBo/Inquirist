@@ -4,20 +4,16 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Answer;
-import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.Vote;
-import com.example.demo.model.VoteGuest;
 import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.UsersRepository;
-import com.example.demo.repository.VoteGuestsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
@@ -34,9 +30,6 @@ public class VoteController
 	@Autowired
 	VoteUsersRepository voteUserRepo;
 
-	@Autowired
-	VoteGuestsRepository voteGuestRepo;
-
 	@PostMapping
 	public String vote(@ModelAttribute(value = "vote") Vote vote, Map<String, Object> model)
 	{
@@ -52,10 +45,7 @@ public class VoteController
 			voteUserRepo.save(newVote);
 
 		}
-		else
-		{
 
-		}
 		return "index";
 	}
 

@@ -21,6 +21,10 @@
 			<label for="name">name</label>
 			<input type="text" th:field="*{name}" />
 			
+			<select th:field="*{role}">
+			    <option th:each="r : ${T(com.example.demo.model.Role).values()}" th:value="${r}" th:text="${r}"></option>
+			</select>
+			
 			<input type="submit" value="Sign up"/>
 		</form>
 	</body>

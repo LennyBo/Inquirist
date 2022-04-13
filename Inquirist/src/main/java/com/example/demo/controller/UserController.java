@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,12 +21,12 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.example.demo.SecurityToolBox;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
+import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
-import com.example.demo.repository.VoteGuestsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
@@ -45,9 +44,6 @@ public class UserController
 
 	@Autowired
 	VoteUsersRepository voteusersRepo;
-
-	@Autowired
-	VoteGuestsRepository voteguestsRepo;
 
 	@GetMapping
 	@PreAuthorize("ROLE_ADMIN")
@@ -96,10 +92,10 @@ public class UserController
 	public RedirectView insert(@ModelAttribute(value = "user") User user, Map<String, Object> model)
 	{
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		
+
 		String encodedPassword = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encodedPassword);
-		
+
 		String encodedPasswordConfirm = passwordEncoder.encode(user.getPasswordConfirm());
 		user.setPassword(encodedPasswordConfirm);
 
@@ -133,7 +129,6 @@ public class UserController
 		{
 			for (Answer answer : answersRepo.findAllByPoll(poll))
 			{
-				voteguestsRepo.deleteAllByAnswer(answer);
 				voteusersRepo.deleteAllByAnswer(answer);
 			}
 			answersRepo.deleteAllByPoll(poll);

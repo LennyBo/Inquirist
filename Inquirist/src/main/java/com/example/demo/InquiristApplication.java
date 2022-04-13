@@ -9,21 +9,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.example.demo.model.Answer;
+import com.example.demo.model.Poll;
+import com.example.demo.model.Role;
+import com.example.demo.model.User;
+import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
-import com.example.demo.repository.CategoriesRepository;
-import com.example.demo.repository.GuestsRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
-import com.example.demo.repository.VoteGuestsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
 @SpringBootApplication
 @Configuration
 public class InquiristApplication
 {
-	@Autowired
-	CategoriesRepository categoriesRepo;
-
 	@Autowired
 	UsersRepository usersRepo;
 
@@ -34,13 +33,7 @@ public class InquiristApplication
 	AnswersRepository answersRepo;
 
 	@Autowired
-	GuestsRepository guestsRepo;
-
-	@Autowired
 	VoteUsersRepository voteusersRepo;
-
-	@Autowired
-	VoteGuestsRepository voteguestsRepo;
 
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder()
@@ -56,12 +49,9 @@ public class InquiristApplication
 	@PostConstruct
 	public void init()
 	{
-//		User mat = new User("user", "mat", "mdp", true);
+//		User mat = new User("user", "mat", "mdp", "mdp", Role.ADMIN);
 //		mat.setPasswordConfirm(null);
 //		usersRepo.save(mat);
-//
-//		Guest mat2 = new Guest("mat2");
-//		guestsRepo.save(mat2);
 //
 //		for (int i = 0; i < 5; i++)
 //		{
@@ -73,12 +63,12 @@ public class InquiristApplication
 //
 //			answersRepo.save(oui);
 //			answersRepo.save(non);
-//			
-//			VoteUser vu = new VoteUser(mat, oui);
-//			VoteGuest vg = new VoteGuest(mat2, non);
-//			
-//			voteusersRepo.save(vu);
-//			voteguestsRepo.save(vg);
+//
+//			VoteUser vuo = new VoteUser(mat, oui);
+//			VoteUser vun = new VoteUser(mat, non);
+//
+//			voteusersRepo.save(vuo);
+//			voteusersRepo.save(vun);
 //		}
 //
 //		usersRepo.save(mat);

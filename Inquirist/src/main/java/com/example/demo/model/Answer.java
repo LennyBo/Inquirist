@@ -41,6 +41,8 @@ public class Answer
 		return "Answer [id=" + id + ", poll=" + poll + ", answer=" + answer + "]";
 	}
 
+	/* --- Getters & Setters --- */
+
 	public Long getId()
 	{
 		return id;
