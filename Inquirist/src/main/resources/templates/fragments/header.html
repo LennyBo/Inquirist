@@ -3,13 +3,13 @@
     <a th:href="@{/users}">Users</a>
     <a th:href="@{/polls}">Polls</a>
     <div th:fragment="logout" class="logout" sec:authorize="isAuthenticated()"> 
-        Utilisateur: <span sec:authentication="name">[]</span>
-        Roles: <span sec:authentication="principal.authorities"></span> 
-        <a th:href="@{/logout}">Logout</a>
+        <div>Utilisateur: <span sec:authentication="name">[]</span></div>
+        <div>Roles: <span sec:authentication="principal.authorities"></span></div>
+        <div><a th:href="@{/logout}">Logout</a></div>
     </div>
 
     <div sec:authorize="isAnonymous()">
-        <a th:href="@{/users/create}">Sign up</a>
+        <a th:href="@{/signup}">Sign up</a>
         <a th:href="@{/login}">Login</a>
     </div>
     </div>

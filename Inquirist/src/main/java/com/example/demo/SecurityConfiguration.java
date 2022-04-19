@@ -34,11 +34,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 		http.headers().frameOptions().disable(); // FIXME
 
 		http.authorizeRequests() //
-				.antMatchers("/login", "/register").permitAll() //
+				.antMatchers("/login", "/signup").permitAll() //
 				.antMatchers("/users").authenticated() //
 				.antMatchers("/polls").authenticated() //
 				.and().formLogin()//
-				.and().logout().logoutSuccessUrl("/register");
+				.and().logout().logoutSuccessUrl("/");
 	}
 
 	@Bean

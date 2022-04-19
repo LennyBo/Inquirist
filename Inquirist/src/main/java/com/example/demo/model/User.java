@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
@@ -45,8 +47,6 @@ public class User
 		this.passwordConfirm = passwordConfirm;
 		this.name = name;
 		this.role = role;
-
-		// TODO encrypt password
 	}
 
 	public User()
@@ -66,6 +66,14 @@ public class User
 		for (VoteUser voteUser : voteUsers)
 			polls.add(voteUser.getAnswer().getPoll());
 		return polls;
+	}
+
+	public void encryptPasswords()
+	{
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+		password = passwordEncoder.encode(password);
+		passwordConfirm = passwordEncoder.encode(passwordConfirm);
 	}
 
 	/* --- Getters & Setters --- */

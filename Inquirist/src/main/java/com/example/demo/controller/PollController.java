@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -46,12 +47,12 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
+		if (SecurityToolBox.containsRole(auth, "WRITER"))
 		{
 			User user = usersRepo.findByUsername(auth.getName());
 			model.put("polls", pollsRepo.findAllByOwner(user));
 		}
-		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		else if (SecurityToolBox.containsRole(auth, "ADMIN"))
 		{
 			model.put("polls", pollsRepo.findAll());
 		}
@@ -64,17 +65,7 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
-		{
-			// TODO Verify if the user has the the right
-			model.put("poll", pollsRepo.findById(id).get());
-
-			Object[] answers = answersRepo.findAllByPollId(id).toArray();
-			model.put("answers", answers);
-
-			model.put("vote", new Vote());
-		}
-		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		if (!SecurityToolBox.containsRole(auth, "READER"))
 		{
 			model.put("poll", pollsRepo.findById(id).get());
 
@@ -82,9 +73,15 @@ public class PollController
 			model.put("answers", answers);
 
 			model.put("vote", new Vote());
+			
+			return "poll_detail_vote";
 		}
-
-		return "poll_detail";
+		else
+		{
+			model.put("poll", pollsRepo.findById(id).get());
+			
+			return "poll_detail";
+		}
 	}
 
 	@GetMapping("/create")
@@ -92,7 +89,7 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "USER") || SecurityToolBox.containsRole(auth, "ADMIN"))
+		if (!SecurityToolBox.containsRole(auth, "READER"))
 		{
 			return "poll_create";
 		}
@@ -105,7 +102,7 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_USER") || SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		if (!SecurityToolBox.containsRole(auth, "READER"))
 		{
 			User owner = usersRepo.findByUsername(auth.getName());
 
@@ -136,7 +133,7 @@ public class PollController
 		{
 			Poll poll = p.get();
 
-			if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
+			if (SecurityToolBox.containsRole(auth, "WRITER"))
 			{
 				User user = usersRepo.findByUsername(auth.getName());
 
@@ -145,7 +142,7 @@ public class PollController
 					deletePoll(poll);
 				}
 			}
-			else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+			else if (SecurityToolBox.containsRole(auth, "ADMIN"))
 			{
 				deletePoll(poll);
 			}
