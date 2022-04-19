@@ -1,13 +1,16 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="utf-8" />
-    </head>
-    <body>
-    <div  th:fragment="header">
+<div th:fragment="header">
     <p>INQUIRIST</p>
     <a th:href="@{/users}">Users</a>
     <a th:href="@{/polls}">Polls</a>
+    <div th:fragment="logout" class="logout" sec:authorize="isAuthenticated()"> 
+        <div>Utilisateur: <span sec:authentication="name">[]</span></div>
+        <div>Roles: <span sec:authentication="principal.authorities"></span></div>
+        <div><a th:href="@{/logout}">Logout</a></div>
     </div>
-    </body>
-</html>
+
+    <div sec:authorize="isAnonymous()">
+        <a th:href="@{/signup}">Sign up</a>
+        <a th:href="@{/login}">Login</a>
+    </div>
+    </div>
+</div>

@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -22,7 +23,6 @@ import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
-import com.example.demo.repository.VoteGuestsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
@@ -41,15 +41,12 @@ public class UserController
 	@Autowired
 	VoteUsersRepository voteusersRepo;
 
-	@Autowired
-	VoteGuestsRepository voteguestsRepo;
-
 	@GetMapping
 	public String users(Map<String, Object> model)
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		if (SecurityToolBox.containsRole(auth, "ADMIN"))
 		{
 			model.put("users", usersRepo.findAll());
 		}
@@ -60,48 +57,55 @@ public class UserController
 	@GetMapping("/{id}")
 	public String detail(@PathVariable("id") long id, Map<String, Object> model)
 	{
-		User user = usersRepo.findById(id).get();
-		model.put("user", user);
-
-		List<VoteUser> votes = voteusersRepo.findAllByUser(user);
-		List<Poll> polls = new ArrayList<Poll>();
-		for (VoteUser vote : votes)
+		Optional<User> u = usersRepo.findById(id);
+		if (!u.isEmpty())
 		{
-			polls.add(vote.getAnswer().getPoll());
+			User user = u.get();
+
+			model.put("user", user);
+
+			List<VoteUser> votes = voteusersRepo.findAllByUser(user);
+			List<Poll> polls = new ArrayList<Poll>();
+			for (VoteUser vote : votes)
+			{
+				polls.add(vote.getAnswer().getPoll());
+			}
+			model.put("polls", polls);
 		}
-		model.put("polls", polls);
-//		model.put("polls", user.getParticipatedPolls(voteusersRepository));
-//		model.put("polls", user.getOwnedPolls(pollsRepo));
+
 		return "user_detail";
 	}
 
-	@GetMapping("{id}/remove")
+	@PostMapping("{id}/remove")
 	public RedirectView deleteUser(@PathVariable("id") long id, Map<String, Object> model)
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		if (SecurityToolBox.containsRole(auth, "ADMIN"))
 		{
 			Optional<User> u = usersRepo.findById(id);
 			if (!u.isEmpty())
 			{
 				User user = u.get();
-
-				// FIXME Delete on CASCADE user: refactor ?
-				for (Poll poll : pollsRepo.findAllByOwner(user))
-				{
-					for (Answer answer : answersRepo.findAllByPoll(poll))
-					{
-						voteguestsRepo.deleteAllByAnswer(answer);
-						voteusersRepo.deleteAllByAnswer(answer);
-					}
-					answersRepo.deleteAllByPoll(poll);
-				}
-				pollsRepo.deleteAllByOwner(user);
-				usersRepo.delete(user);
+				deleteUser(user);
 			}
 		}
 
 		return new RedirectView("/users");
+	}
+
+	private void deleteUser(User user)
+	{
+		// FIXME Delete on CASCADE user: refactor ?
+		for (Poll poll : pollsRepo.findAllByOwner(user))
+		{
+			for (Answer answer : answersRepo.findAllByPoll(poll))
+			{
+				voteusersRepo.deleteAllByAnswer(answer);
+			}
+			answersRepo.deleteAllByPoll(poll);
+		}
+		pollsRepo.deleteAllByOwner(user);
+		usersRepo.delete(user);
 	}
 }

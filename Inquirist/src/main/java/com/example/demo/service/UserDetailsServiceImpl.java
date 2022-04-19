@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.service;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,31 +13,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.model.User;
-//import com.example.demo.model.User;
 import com.example.demo.repository.UsersRepository;
 
 @Service
-public class UserDetailImpl implements UserDetailsService {
-
+public class UserDetailsServiceImpl implements UserDetailsService
+{
 	@Autowired
 	private UsersRepository userRepository;
 
 	@Override
 	@Transactional(readOnly = true)
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
+	{
 		User user = userRepository.findByUsername(username);
+
 		if (user == null)
-			throw new UsernameNotFoundException(username);
-
-		Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-
-		grantedAuthorities.add(new SimpleGrantedAuthority("User"));
-		if (user.getIsAdmin()) {
-			grantedAuthorities.add(new SimpleGrantedAuthority("Admin"));
+		{
+			// TODO Do something
+			return null;
 		}
 
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-				grantedAuthorities);
+		Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
+		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().name()));
 
+		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
 	}
 }

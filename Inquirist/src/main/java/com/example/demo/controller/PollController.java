@@ -21,12 +21,9 @@ import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.Vote;
-import com.example.demo.model.VoteGuest;
-import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
-import com.example.demo.repository.VoteGuestsRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
 @Controller
@@ -45,27 +42,23 @@ public class PollController
 	@Autowired
 	VoteUsersRepository voteusersRepo;
 
-	@Autowired
-	VoteGuestsRepository voteguestsRepo;
-
 	@GetMapping
 	public String polls(Map<String, Object> model)
 	{
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
+		if (SecurityToolBox.containsRole(auth, "WRITER"))
 		{
 			User user = usersRepo.findByUsername(auth.getName());
 			model.put("polls", pollsRepo.findAllByOwner(user));
 		}
-		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		else if (SecurityToolBox.containsRole(auth, "ADMIN"))
 		{
 			model.put("polls", pollsRepo.findAll());
 		}
 
 		return "polls";
-
 	}
 
 	@GetMapping("/{id}")
@@ -73,17 +66,7 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
-		{
-			// TODO Verify if the user has the the right
-			model.put("poll", pollsRepo.findById(id).get());
-
-			Object[] answers = answersRepo.findAllByPollId(id).toArray();
-			model.put("answers", answers);
-
-			model.put("vote", new Vote());
-		}
-		else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+		if (!SecurityToolBox.containsRole(auth, "READER"))
 		{
 			model.put("poll", pollsRepo.findById(id).get());
 
@@ -91,15 +74,28 @@ public class PollController
 			model.put("answers", answers);
 
 			model.put("vote", new Vote());
-		}
 
-		return "poll_detail";
+			return "poll_detail_vote";
+		}
+		else
+		{
+			model.put("poll", pollsRepo.findById(id).get());
+
+			return "poll_detail";
+		}
 	}
 
 	@GetMapping("/create")
 	public String create(@ModelAttribute(value = "poll") Poll poll, Map<String, Object> model)
 	{
-		return "poll_create";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (!SecurityToolBox.containsRole(auth, "READER"))
+		{
+			return "poll_create";
+		}
+
+		return "error";
 	}
 
 	@PostMapping("/insert")
@@ -107,14 +103,15 @@ public class PollController
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (auth != null)
+		if (!SecurityToolBox.containsRole(auth, "READER"))
 		{
 			User owner = usersRepo.findByUsername(auth.getName());
-			
-			if(owner == null) {
+
+			if (owner == null)
+			{
 				owner = usersRepo.findByUsername("matthieu");
 			}
-			
+
 			poll.setOwner(owner);
 			poll.setStartDate(new Date(System.currentTimeMillis()));
 			String[] answers = poll.getAnswersStringList();
@@ -142,7 +139,7 @@ public class PollController
 		{
 			Poll poll = p.get();
 
-			if (SecurityToolBox.containsRole(auth, "ROLE_USER"))
+			if (SecurityToolBox.containsRole(auth, "WRITER"))
 			{
 				User user = usersRepo.findByUsername(auth.getName());
 
@@ -151,7 +148,7 @@ public class PollController
 					deletePoll(poll);
 				}
 			}
-			else if (SecurityToolBox.containsRole(auth, "ROLE_ADMIN"))
+			else if (SecurityToolBox.containsRole(auth, "ADMIN"))
 			{
 				deletePoll(poll);
 			}
@@ -159,7 +156,7 @@ public class PollController
 
 		return new RedirectView("/polls");
 	}
-	
+
 	@GetMapping("/result/{id}")
 	public String resultPoll(@PathVariable("id") long id, Map<String, Object> model)
 	{
@@ -170,9 +167,7 @@ public class PollController
 			answer.setNbVote(numberOfVoteForAnswer(answer));
 		}
 		model.put("answers", answers.toArray());
-		
-		
-		
+
 		return "poll_result";
 	}
 
@@ -181,18 +176,14 @@ public class PollController
 		// FIXME Delete on CASCADE answers: refactor ?
 		for (Answer answer : answersRepo.findAllByPoll(poll))
 		{
-			voteguestsRepo.deleteAllByAnswer(answer);
 			voteusersRepo.deleteAllByAnswer(answer);
 		}
 		answersRepo.deleteAllByPoll(poll);
 		pollsRepo.delete(poll);
 	}
-	
+
 	private int numberOfVoteForAnswer(Answer answer)
 	{
-		int i=0;
-		i+=voteusersRepo.findByAnswer(answer).size();
-		i+=voteguestsRepo.findByAnswer(answer).size();
-		return i;
+		return voteusersRepo.findByAnswer(answer).size();
 	}
 }

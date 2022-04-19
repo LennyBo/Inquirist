@@ -1,13 +1,18 @@
 package com.example.demo.model;
 
+import java.beans.Transient;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.VoteUsersRepository;
@@ -18,23 +23,30 @@ import lombok.Data;
 @Entity
 public class User
 {
-	@Column(unique = true)
+	@Column(nullable = false, unique = true)
 	private String username;
+	@Column(nullable = false)
 	private String password;
+	@Column(nullable = false)
+	private String passwordConfirm;
+	@Column(nullable = false)
 	private String name;
-	private Boolean isAdmin;
+
+	@Enumerated(EnumType.ORDINAL)
+	private Role role;
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	private Long id;
 
-	public User(String username, String name, String password, Boolean isAdmin)
+	public User(String username, String name, String password, String passwordConfirm, Role role)
 	{
 		super();
 		this.username = username;
 		this.password = password;
+		this.passwordConfirm = passwordConfirm;
 		this.name = name;
-		this.isAdmin = isAdmin;
+		this.role = role;
 	}
 
 	public User()
@@ -56,6 +68,16 @@ public class User
 		return polls;
 	}
 
+	public void encryptPasswords()
+	{
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+		password = passwordEncoder.encode(password);
+		passwordConfirm = passwordEncoder.encode(passwordConfirm);
+	}
+
+	/* --- Getters & Setters --- */
+
 	public String getUsername()
 	{
 		return username;
@@ -76,6 +98,17 @@ public class User
 		this.password = password;
 	}
 
+	@Transient
+	public String getPasswordConfirm()
+	{
+		return passwordConfirm;
+	}
+
+	public void setPasswordConfirm(String passwordConfirm)
+	{
+		this.passwordConfirm = passwordConfirm;
+	}
+
 	public String getName()
 	{
 		return name;
@@ -86,14 +119,14 @@ public class User
 		this.name = name;
 	}
 
-	public Boolean getIsAdmin()
+	public Role getRole()
 	{
-		return isAdmin;
+		return role;
 	}
 
-	public void setIsAdmin(Boolean isAdmin)
+	public void setRole(Role role)
 	{
-		this.isAdmin = isAdmin;
+		this.role = role;
 	}
 
 	public Long getId()

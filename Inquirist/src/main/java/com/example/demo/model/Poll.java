@@ -1,8 +1,6 @@
 package com.example.demo.model;
 
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -16,8 +14,6 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import com.example.demo.repository.VoteUsersRepository;
 
 import lombok.Data;
 
@@ -61,22 +57,13 @@ public class Poll
 	public Poll()
 	{
 	}
-	
+
 	public static boolean Valid(Poll poll)
 	{
-		if(poll.getTitle() == null || poll.getTitle() == "")
+		if (poll.getTitle() == null || poll.getTitle() == "")
 			return false;
 		return true;
 	}
-/*
-	public List<User> getParticipants(VoteUsersRepository voteusersRepo)
-	{
-		List<VoteUser> voteUsers = voteusersRepo.findAllByPoll(this);
-		List<User> users = new LinkedList<User>();
-		for (VoteUser voteUser : voteUsers)
-			users.add(voteUser.getUser());
-		return users;
-	}*/
 
 	public String[] getAnswersStringList1()
 	{
@@ -101,6 +88,8 @@ public class Poll
 	{
 		return "Poll [id=" + id + ", title=" + title + ", description=" + description + ", startDate=" + startDate + ", owner=" + owner + "]";
 	}
+
+	/* --- Getters & Setters --- */
 
 	public Long getId()
 	{

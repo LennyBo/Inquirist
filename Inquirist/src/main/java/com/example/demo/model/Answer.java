@@ -39,8 +39,10 @@ public class Answer
 	@Override
 	public String toString()
 	{
-		return "Answer [id=" + id + ", poll=" + poll + ", answer=" + answer + ", nbVote="+ nbVote  + "]";
+		return "Answer [id=" + id + ", poll=" + poll + ", answer=" + answer + ", nbVote=" + nbVote + "]";
 	}
+
+	/* --- Getters & Setters --- */
 
 	public Long getId()
 	{
@@ -72,11 +74,13 @@ public class Answer
 		this.answer = answer;
 	}
 
-	public int getNbVote() {
+	public int getNbVote()
+	{
 		return nbVote;
 	}
 
-	public void setNbVote(int nbVote) {
+	public void setNbVote(int nbVote)
+	{
 		this.nbVote = nbVote;
 	}
 }
