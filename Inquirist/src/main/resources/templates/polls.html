@@ -37,7 +37,7 @@
 		</tbody>
 	</table>
 	
-	<div sec:authorize="hasAnyAuthority('WRITER', 'ADMIN')">
+	<div sec:authorize="hasAuthority('WRITER')">
 		<a href="polls/create">Create Poll</a>
 	</div>
 </body>

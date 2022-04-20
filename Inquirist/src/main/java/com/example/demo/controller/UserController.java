@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -42,14 +43,10 @@ public class UserController
 	VoteUsersRepository voteusersRepo;
 
 	@GetMapping
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String users(Map<String, Object> model)
 	{
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-		if (SecurityToolBox.containsRole(auth, "ADMIN"))
-		{
-			model.put("users", usersRepo.findAll());
-		}
+		model.put("users", usersRepo.findAll());
 
 		return "users";
 	}
@@ -77,18 +74,14 @@ public class UserController
 	}
 
 	@PostMapping("{id}/remove")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public RedirectView deleteUser(@PathVariable("id") long id, Map<String, Object> model)
 	{
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-		if (SecurityToolBox.containsRole(auth, "ADMIN"))
+		Optional<User> u = usersRepo.findById(id);
+		if (!u.isEmpty())
 		{
-			Optional<User> u = usersRepo.findById(id);
-			if (!u.isEmpty())
-			{
-				User user = u.get();
-				deleteUser(user);
-			}
+			User user = u.get();
+			deleteUser(user);
 		}
 
 		return new RedirectView("/users");

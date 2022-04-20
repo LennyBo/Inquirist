@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -86,50 +87,44 @@ public class PollController
 	}
 
 	@GetMapping("/create")
+	@PreAuthorize("hasAuthority('WRITER')")
 	public String create(@ModelAttribute(value = "poll") Poll poll, Map<String, Object> model)
 	{
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-		if (!SecurityToolBox.containsRole(auth, "READER"))
-		{
-			return "poll_create";
-		}
-
-		return "error";
+		return "poll_create";
 	}
 
 	@PostMapping("/insert")
+	@PreAuthorize("hasAuthority('WRITER')")
 	public RedirectView insert(@ModelAttribute(value = "poll") Poll poll, Map<String, Object> model)
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (!SecurityToolBox.containsRole(auth, "READER"))
+		User owner = usersRepo.findByUsername(auth.getName());
+
+		if (owner == null) 
 		{
-			User owner = usersRepo.findByUsername(auth.getName());
+			owner = usersRepo.findByUsername("matthieu"); // FIXME Redirect and do nothing
+		}
 
-			if (owner == null)
+		poll.setOwner(owner);
+		poll.setStartDate(new Date(System.currentTimeMillis()));
+		String[] answers = poll.getAnswersStringList();
+
+		if (Poll.Valid(poll) && answers.length > 1)
+		{
+			pollsRepo.save(poll);
+			for (int i = 0; i < answers.length; i++)
 			{
-				owner = usersRepo.findByUsername("matthieu");
-			}
-
-			poll.setOwner(owner);
-			poll.setStartDate(new Date(System.currentTimeMillis()));
-			String[] answers = poll.getAnswersStringList();
-
-			if (Poll.Valid(poll) && answers.length > 1)
-			{
-				pollsRepo.save(poll);
-				for (int i = 0; i < answers.length; i++)
-				{
-					Answer answer = new Answer(poll, answers[i]);
-					answersRepo.save(answer);
-				}
+				Answer answer = new Answer(poll, answers[i]);
+				answersRepo.save(answer);
 			}
 		}
+		
 		return new RedirectView("/polls");
 	}
 
 	@GetMapping("/{id}/remove")
+	@PreAuthorize("hasAuthority('WRITER')")
 	public RedirectView removePoll(@PathVariable("id") long id, Map<String, Object> model)
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

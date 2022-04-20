@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UsersRepository;
 
@@ -34,7 +35,24 @@ public class UserDetailsServiceImpl implements UserDetailsService
 		}
 
 		Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
-		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().name()));
+		switch (user.getRole()) // Could be refactored, but it's to be clear
+		{
+			case READER:
+				grantedAuthorities.add(new SimpleGrantedAuthority(Role.READER.name()));
+				break;
+			case WRITER:
+				grantedAuthorities.add(new SimpleGrantedAuthority(Role.READER.name()));
+				grantedAuthorities.add(new SimpleGrantedAuthority(Role.WRITER.name()));
+				break;
+			case ADMIN:
+				grantedAuthorities.add(new SimpleGrantedAuthority(Role.READER.name()));
+				grantedAuthorities.add(new SimpleGrantedAuthority(Role.WRITER.name()));
+				grantedAuthorities.add(new SimpleGrantedAuthority(Role.ADMIN.name()));
+				break;
+			default:
+				grantedAuthorities.add(new SimpleGrantedAuthority(Role.READER.name()));
+				break;
+		}
 
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
 	}
