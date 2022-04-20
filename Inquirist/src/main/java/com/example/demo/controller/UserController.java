@@ -1,22 +1,22 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.example.demo.SecurityToolBox;
+import com.example.demo.filter.UserFilter;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
@@ -47,6 +47,25 @@ public class UserController
 	public String users(Map<String, Object> model)
 	{
 		model.put("users", usersRepo.findAll());
+		model.put("filter", new UserFilter());
+		return "users";
+	}
+
+	@PostMapping("/filter")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public String usersFiltered(@ModelAttribute(value = "filter") UserFilter filter, Map<String, Object> model)
+	{
+		List<User> usersFiltered = new LinkedList<User>();
+		for (User u : usersRepo.findAll())
+		{
+			if (u.getUsername().contains(filter.getUsername()))
+			{
+				usersFiltered.add(u);
+			}
+		}
+
+		model.put("users", usersFiltered);
+		model.put("filter", filter);
 		return "users";
 	}
 

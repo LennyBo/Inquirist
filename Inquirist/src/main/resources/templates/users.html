@@ -9,7 +9,19 @@
 
 	<h1>List of all users</h1>
 	
-	
+	<form th:action="@{/users/filter}" th:object="${filter}" method="post">
+      	<table>
+         	<tr>
+            	<td>Filter on username:</td>
+            	<td><input type='text' name='username' th:field="*{username}" autofocus="true"></td>
+         	</tr>
+         	<tr>
+            	<td><input type="submit" value="Filter"/></td>
+         	</tr>
+      	</table>
+      	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+  	</form>
+  	
 	<table>
 		<thead>
 			<tr>

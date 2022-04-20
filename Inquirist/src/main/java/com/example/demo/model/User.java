@@ -75,6 +75,13 @@ public class User
 		password = passwordEncoder.encode(password);
 		passwordConfirm = passwordEncoder.encode(passwordConfirm);
 	}
+	
+	@Override
+	public String toString()
+	{
+		return username + " (name=" + name + ", role=" + role + ")";
+	}
+
 
 	/* --- Getters & Setters --- */
 
