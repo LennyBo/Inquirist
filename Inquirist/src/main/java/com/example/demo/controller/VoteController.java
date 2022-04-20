@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,22 +35,18 @@ public class VoteController
 	VoteUsersRepository voteUserRepo;
 
 	@PostMapping
+	@PreAuthorize("hasAuthority('WRITER')")
 	public RedirectView vote(@ModelAttribute(value = "vote") Vote vote, Map<String, Object> model)
 	{
-		System.out.println(vote);
 		Answer answer = answersRepo.findById(vote.getId()).get();
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = usersRepo.findByUsername(auth.getName());
 
-		// crée le vote en fonction du user ou du guest
-		if (true)
-		{
-			// mettre l'utilsateur login
-			User user = usersRepo.findById((long) 1).get();
-			VoteUser newVote = new VoteUser(user, answer);
-			voteUserRepo.save(newVote);
-
-		}
+		// Actual user add his vote
+		VoteUser newVote = new VoteUser(user, answer);
+		voteUserRepo.save(newVote);
 
 		return new RedirectView("/polls/result/" + answer.getPoll().getId());
 	}
-
 }

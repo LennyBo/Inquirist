@@ -47,11 +47,11 @@ public class UserController
 	public String users(Map<String, Object> model)
 	{
 		model.put("users", usersRepo.findAll());
-
 		return "users";
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('READER')")
 	public String detail(@PathVariable("id") long id, Map<String, Object> model)
 	{
 		Optional<User> u = usersRepo.findById(id);

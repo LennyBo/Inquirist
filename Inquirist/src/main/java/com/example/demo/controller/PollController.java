@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -44,46 +45,25 @@ public class PollController
 	VoteUsersRepository voteusersRepo;
 
 	@GetMapping
+	@PreAuthorize("hasAuthority('READER')")
 	public String polls(Map<String, Object> model)
 	{
-
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-		if (SecurityToolBox.containsRole(auth, "WRITER"))
-		{
-			User user = usersRepo.findByUsername(auth.getName());
-			model.put("polls", pollsRepo.findAllByOwner(user));
-		}
-		else if (SecurityToolBox.containsRole(auth, "ADMIN"))
-		{
-			model.put("polls", pollsRepo.findAll());
-		}
-
+		model.put("polls", pollsRepo.findAll());
 		return "polls";
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('READER')")
 	public String detail(@PathVariable("id") long id, Map<String, Object> model)
 	{
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		model.put("poll", pollsRepo.findById(id).get());
 
-		if (!SecurityToolBox.containsRole(auth, "READER"))
-		{
-			model.put("poll", pollsRepo.findById(id).get());
+		Object[] answers = answersRepo.findAllByPollId(id).toArray();
+		model.put("answers", answers);
 
-			Object[] answers = answersRepo.findAllByPollId(id).toArray();
-			model.put("answers", answers);
+		model.put("vote", new Vote());
 
-			model.put("vote", new Vote());
-
-			return "poll_detail_vote";
-		}
-		else
-		{
-			model.put("poll", pollsRepo.findById(id).get());
-
-			return "poll_detail";
-		}
+		return "poll_detail";
 	}
 
 	@GetMapping("/create")
@@ -98,20 +78,24 @@ public class PollController
 	public RedirectView insert(@ModelAttribute(value = "poll") Poll poll, Map<String, Object> model)
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
 		User owner = usersRepo.findByUsername(auth.getName());
 
-		if (owner == null) 
-		{
-			owner = usersRepo.findByUsername("matthieu"); // FIXME Redirect and do nothing
-		}
+		System.out.println("owner: " + owner.getName());
 
 		poll.setOwner(owner);
 		poll.setStartDate(new Date(System.currentTimeMillis()));
 		String[] answers = poll.getAnswersStringList();
 
+		System.out.println("title: " + poll.getTitle());
+		System.out.println("answers: " + Arrays.toString(answers));
+		for (String a : answers)
+		{
+			System.out.println(" - '" + a + "'");
+		}
+
 		if (Poll.Valid(poll) && answers.length > 1)
 		{
+			System.out.println("valid poll");
 			pollsRepo.save(poll);
 			for (int i = 0; i < answers.length; i++)
 			{
@@ -119,7 +103,17 @@ public class PollController
 				answersRepo.save(answer);
 			}
 		}
-		
+		else
+		{
+			System.out.println("not valid poll");
+		}
+
+		System.out.println("all polls: ");
+		for (Poll p : pollsRepo.findAll())
+		{
+			System.out.println(" + " + p.getTitle());
+		}
+
 		return new RedirectView("/polls");
 	}
 
@@ -153,6 +147,7 @@ public class PollController
 	}
 
 	@GetMapping("/result/{id}")
+	@PreAuthorize("hasAuthority('READER')")
 	public String resultPoll(@PathVariable("id") long id, Map<String, Object> model)
 	{
 		model.put("poll", pollsRepo.findById(id).get());

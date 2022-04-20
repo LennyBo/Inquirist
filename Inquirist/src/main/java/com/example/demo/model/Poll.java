@@ -65,15 +65,6 @@ public class Poll
 		return true;
 	}
 
-	public String[] getAnswersStringList1()
-	{
-		if (answersString == null)
-		{
-			return new String[] { "yes", "no" };
-		}
-		return answersString.split(";");
-	}
-
 	public String[] getAnswersStringList()
 	{
 		if (answersString == null)

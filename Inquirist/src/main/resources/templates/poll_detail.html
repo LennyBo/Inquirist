@@ -10,6 +10,18 @@
   	<h1>POLL</h1>
     
     <div th:text="${poll.title}"></div>
-	<div th:text="${poll.description}"></div>
+	<div th:text="${poll.description}"></div>	
+	
+	<div sec:authorize="hasAuthority('WRITER')">
+		<h3>Answer :</h3>
+	    <form th:action="@{/vote}"  method="post">
+	        <tr th:each="answer : ${answers}">
+				<label th:text="${answer.answer}"></label>
+				<input type="radio" th:field="*{vote.id}" th:value=${answer.id}>
+				<br>	
+	       	</tr>
+			<button >vote</button>
+		</form>
+	</div>
 </body>
 </html>
