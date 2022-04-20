@@ -82,7 +82,6 @@ public class User
 		return username + " (name=" + name + ", role=" + role + ")";
 	}
 
-
 	/* --- Getters & Setters --- */
 
 	public String getUsername()

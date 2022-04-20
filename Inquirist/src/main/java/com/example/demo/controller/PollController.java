@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.SecurityToolBox;
+import com.example.demo.filter.PollFilter;
+import com.example.demo.filter.UserFilter;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
@@ -49,6 +53,35 @@ public class PollController
 	public String polls(Map<String, Object> model)
 	{
 		model.put("polls", pollsRepo.findAll());
+		model.put("filter", new PollFilter());
+		return "polls";
+	}
+
+	@PostMapping("/filter")
+	@PreAuthorize("hasAuthority('READER')")
+	public String pollsFiltered(@ModelAttribute(value = "filter") PollFilter filter, Map<String, Object> model)
+	{
+		List<Poll> pollsFiltered = new LinkedList<Poll>();
+		for (Poll p : pollsRepo.findAll())
+		{
+			if (p.getTitle().contains(filter.getTitle()) && p.getOwner().getUsername().contains(filter.getOwnerUsername()))
+			{
+				int nbVotes = 0;
+				List<Answer> answers = answersRepo.findAllByPollId(p.getId());
+				for (Answer answer : answers)
+				{
+					nbVotes += numberOfVoteForAnswer(answer);
+				}
+
+				if (nbVotes >= filter.getNbMinVotes() && nbVotes <= filter.getNbMaxVotes())
+				{
+					pollsFiltered.add(p);
+				}
+			}
+		}
+
+		model.put("polls", pollsFiltered);
+		model.put("filter", filter);
 		return "polls";
 	}
 
@@ -80,38 +113,18 @@ public class PollController
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User owner = usersRepo.findByUsername(auth.getName());
 
-		System.out.println("owner: " + owner.getName());
-
 		poll.setOwner(owner);
 		poll.setStartDate(new Date(System.currentTimeMillis()));
 		String[] answers = poll.getAnswersStringList();
 
-		System.out.println("title: " + poll.getTitle());
-		System.out.println("answers: " + Arrays.toString(answers));
-		for (String a : answers)
-		{
-			System.out.println(" - '" + a + "'");
-		}
-
 		if (Poll.Valid(poll) && answers.length > 1)
 		{
-			System.out.println("valid poll");
 			pollsRepo.save(poll);
 			for (int i = 0; i < answers.length; i++)
 			{
 				Answer answer = new Answer(poll, answers[i]);
 				answersRepo.save(answer);
 			}
-		}
-		else
-		{
-			System.out.println("not valid poll");
-		}
-
-		System.out.println("all polls: ");
-		for (Poll p : pollsRepo.findAll())
-		{
-			System.out.println(" + " + p.getTitle());
 		}
 
 		return new RedirectView("/polls");

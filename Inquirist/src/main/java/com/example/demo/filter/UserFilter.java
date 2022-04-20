@@ -32,5 +32,4 @@ public class UserFilter
 	{
 		this.username = username;
 	}
-
 }

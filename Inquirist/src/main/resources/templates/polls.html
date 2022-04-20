@@ -6,8 +6,35 @@
 </head>
 <body>
 	<div th:replace="fragments/header :: header"></div>
-
+	
 	<h1>List of all polls</h1>
+
+	<form th:action="@{/polls/filter}" th:object="${filter}" method="post">
+		<table>
+			<tr>
+				<td>Filter on owner username:</td>
+				<td><input type='text' name='ownerUsername' th:field="*{ownerUsername}" autofocus="true"></td>
+			</tr>
+			<tr>
+				<td>Filter on title:</td>
+				<td><input type='text' name='title' th:field="*{title}"></td>
+			</tr>
+			<tr>
+				<td>Filter on number min of votes:</td>
+				<td><input type='number' name='nbMinVotes' th:field="*{nbMinVotes}" min="0"></td>
+			</tr>
+			<tr>
+				<td>Filter on number max of votes:</td>
+				<td><input type='number' name='nbMaxVotes' th:field="*{nbMaxVotes}" min="0"></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="Filter" /></td>
+			</tr>
+		</table>
+	</form>
+	
+	<a href="/polls">Reset filters</a>
+
 	<table>
 		<thead>
 			<tr>
@@ -32,11 +59,11 @@
 				</td>
 				<td><a th:href="@{/polls/{id}(id=${poll.id})}">Detail</a></td>
 				<td><a th:href="@{/polls/result/{id}(id=${poll.id})}">Result</a></td>
-				
+
 			</tr>
 		</tbody>
 	</table>
-	
+
 	<div sec:authorize="hasAuthority('WRITER')">
 		<a href="polls/create">Create Poll</a>
 	</div>
