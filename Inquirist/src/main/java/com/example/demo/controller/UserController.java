@@ -50,19 +50,22 @@ public class UserController
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String users(Map<String, Object> model, @RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize)
 	{
-//		Pageable paging = PageRequest.of(pageNo, pageSize);
-//		Page<User> pagedResult = usersRepo.findAll(paging);
-//
-//		if (pagedResult.hasContent())
-//		{
-//			model.put("users", pagedResult.getContent());
-//		}
-//		else
-//		{
-//			model.put("users", new ArrayList<User>());
-//		}
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+		Page<User> pagedResult = usersRepo.findAll(paging);
 
-		model.put("users", usersRepo.findAll());
+		if (pagedResult.hasContent())
+		{
+			model.put("users", pagedResult.getContent());
+		}
+		else
+		{
+			model.put("users", new ArrayList<User>());
+		}
+
+		model.put("currentPage", pagedResult.getNumber());
+		model.put("totalItems", pagedResult.getTotalElements());
+		model.put("totalPages", pagedResult.getTotalPages());
+//		model.put("users", usersRepo.findAll());
 		model.put("filter", new UserFilter());
 		return "users";
 	}
@@ -88,12 +91,14 @@ public class UserController
 			model.put("user", user);
 
 			List<VoteUser> votes = voteusersRepo.findAllByUser(user);
-			List<Poll> polls = new ArrayList<Poll>();
+			List<Poll> participatedPolls = new ArrayList<Poll>();
 			for (VoteUser vote : votes)
 			{
-				polls.add(vote.getAnswer().getPoll());
+				participatedPolls.add(vote.getAnswer().getPoll());
 			}
-			model.put("polls", polls);
+			model.put("participatedPolls", participatedPolls);
+			
+			model.put("ownedPolls", pollsRepo.findAllByOwner(user));
 		}
 
 		return "user_detail";

@@ -47,6 +47,8 @@ public class User
 		this.passwordConfirm = passwordConfirm;
 		this.name = name;
 		this.role = role;
+		
+		encryptPasswords();
 	}
 
 	public User()
