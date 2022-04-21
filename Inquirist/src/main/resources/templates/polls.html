@@ -9,7 +9,7 @@
 	
 	<h1>List of all polls</h1>
 
-	<form th:action="@{/polls/filter}" th:object="${filter}" method="post">
+	<form th:action="@{/polls/filter}" th:object="${filter}" method="get">
 		<table>
 			<tr>
 				<td>Filter on owner username:</td>

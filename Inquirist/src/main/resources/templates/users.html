@@ -9,7 +9,7 @@
 
 	<h1>List of all users</h1>
 	
-	<form th:action="@{/users/filter}" th:object="${filter}" method="post">
+	<form th:action="@{/users}" th:object="${filter}" method="get">
       	<table>
          	<tr>
             	<td>Filter on username:</td>
@@ -34,7 +34,7 @@
 			</tr>
 		</thead>
 		<tbody th:remove="all-but-first">
-			<tr th:each="user : ${users}">
+			<tr th:each="user : ${usersPage.content}">
 				<td th:text="${user.id}"></td>
 				<td th:text="${user.username}"></td>
 				<td th:text="${user.name}"></td>
@@ -44,5 +44,9 @@
 			</tr>
 		</tbody>
 	</table>
+	
+	<div th:if="${usersPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
+	    <a th:href="@{/users(size=${usersPage.size}, page=${pageNumber}, username=${filter.username})}" th:text=${pageNumber} th:class="${pageNumber==usersPage.number + 1} ? active"></a>
+	</div>
 </body>
 </html>

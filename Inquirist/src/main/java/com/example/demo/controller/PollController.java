@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +20,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.SecurityToolBox;
 import com.example.demo.filter.PollFilter;
-import com.example.demo.filter.UserFilter;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
@@ -57,7 +54,7 @@ public class PollController
 		return "polls";
 	}
 
-	@PostMapping("/filter")
+	@GetMapping("/filter")
 	@PreAuthorize("hasAuthority('READER')")
 	public String pollsFiltered(@ModelAttribute(value = "filter") PollFilter filter, Map<String, Object> model)
 	{

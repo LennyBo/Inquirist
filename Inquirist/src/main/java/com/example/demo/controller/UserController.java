@@ -1,15 +1,15 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,34 +48,31 @@ public class UserController
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public String users(Map<String, Object> model, @RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize)
+	public String users(Map<String, Object> model, @RequestParam(required = false) String username, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size)
 	{
-		Pageable paging = PageRequest.of(pageNo, pageSize);
-		Page<User> pagedResult = usersRepo.findAll(paging);
+		UserFilter filter = new UserFilter();
 
-		if (pagedResult.hasContent())
+		Page<User> pagedResult;
+		if (username == null)
 		{
-			model.put("users", pagedResult.getContent());
+			pagedResult = usersRepo.findAll(PageRequest.of(page - 1, size));
 		}
 		else
 		{
-			model.put("users", new ArrayList<User>());
+			filter.setUsername(username);
+			pagedResult = usersRepo.findAllByUsernameContaining(filter.getUsername(), PageRequest.of(page - 1, size));
 		}
 
-		model.put("currentPage", pagedResult.getNumber());
-		model.put("totalItems", pagedResult.getTotalElements());
-		model.put("totalPages", pagedResult.getTotalPages());
-//		model.put("users", usersRepo.findAll());
-		model.put("filter", new UserFilter());
-		return "users";
-	}
-
-	@PostMapping("/filter")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public String usersFiltered(@ModelAttribute(value = "filter") UserFilter filter, Map<String, Object> model)
-	{
-		model.put("users", usersRepo.findAllByUsernameContaining(filter.getUsername()));
+		model.put("usersPage", pagedResult);
 		model.put("filter", filter);
+
+		int totalPages = pagedResult.getTotalPages();
+		if (totalPages > 0)
+		{
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.put("pageNumbers", pageNumbers);
+		}
+
 		return "users";
 	}
 
@@ -97,7 +94,7 @@ public class UserController
 				participatedPolls.add(vote.getAnswer().getPoll());
 			}
 			model.put("participatedPolls", participatedPolls);
-			
+
 			model.put("ownedPolls", pollsRepo.findAllByOwner(user));
 		}
 
