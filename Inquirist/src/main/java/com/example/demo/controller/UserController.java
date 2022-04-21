@@ -1,19 +1,22 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.filter.UserFilter;
@@ -44,28 +47,31 @@ public class UserController
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public String users(Map<String, Object> model)
+	public String users(Map<String, Object> model, @RequestParam(required = false) String username, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size)
 	{
-		model.put("users", usersRepo.findAll());
-		model.put("filter", new UserFilter());
-		return "users";
-	}
+		UserFilter filter = new UserFilter();
 
-	@PostMapping("/filter")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public String usersFiltered(@ModelAttribute(value = "filter") UserFilter filter, Map<String, Object> model)
-	{
-		List<User> usersFiltered = new LinkedList<User>();
-		for (User u : usersRepo.findAll())
+		Page<User> pagedResult;
+		if (username == null)
 		{
-			if (u.getUsername().contains(filter.getUsername()))
-			{
-				usersFiltered.add(u);
-			}
+			pagedResult = usersRepo.findAll(PageRequest.of(page - 1, size));
+		}
+		else
+		{
+			filter.setUsername(username);
+			pagedResult = usersRepo.findAllByUsernameContaining(filter.getUsername(), PageRequest.of(page - 1, size));
 		}
 
-		model.put("users", usersFiltered);
+		model.put("usersPage", pagedResult);
 		model.put("filter", filter);
+
+		int totalPages = pagedResult.getTotalPages();
+		if (totalPages > 0)
+		{
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.put("pageNumbers", pageNumbers);
+		}
+
 		return "users";
 	}
 
@@ -81,12 +87,14 @@ public class UserController
 			model.put("user", user);
 
 			List<VoteUser> votes = voteusersRepo.findAllByUser(user);
-			List<Poll> polls = new ArrayList<Poll>();
+			List<Poll> participatedPolls = new ArrayList<Poll>();
 			for (VoteUser vote : votes)
 			{
-				polls.add(vote.getAnswer().getPoll());
+				participatedPolls.add(vote.getAnswer().getPoll());
 			}
-			model.put("polls", polls);
+			model.put("participatedPolls", participatedPolls);
+
+			model.put("ownedPolls", pollsRepo.findAllByOwner(user));
 		}
 
 		return "user_detail";

@@ -2,16 +2,16 @@ package com.example.demo.filter;
 
 public class PollFilter
 {
-	private String ownerUsername;
 	private String title;
+	private String description;
 	private int nbMinVotes;
 	private int nbMaxVotes;
 
-	public PollFilter(String ownerUsername, String title, int nbMinVotes, int nbMaxVotes)
+	public PollFilter(String title, String description, int nbMinVotes, int nbMaxVotes)
 	{
 		super();
-		this.ownerUsername = ownerUsername;
 		this.title = title;
+		this.description = description;
 		this.nbMinVotes = nbMinVotes;
 		this.nbMaxVotes = nbMaxVotes;
 	}
@@ -19,7 +19,7 @@ public class PollFilter
 	public PollFilter()
 	{
 		super();
-		ownerUsername = "";
+		description = "";
 		title = "";
 		nbMaxVotes = Integer.MAX_VALUE;
 		nbMinVotes = 0;
@@ -27,19 +27,19 @@ public class PollFilter
 
 	/* --- Getters & Setters --- */
 
-	public String getOwnerUsername()
-	{
-		return ownerUsername;
-	}
-
-	public void setOwnerUsername(String ownerUsername)
-	{
-		this.ownerUsername = ownerUsername;
-	}
-
 	public String getTitle()
 	{
 		return title;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
 	}
 
 	public void setTitle(String title)

@@ -1,14 +1,15 @@
 package com.example.demo.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +19,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.SecurityToolBox;
 import com.example.demo.filter.PollFilter;
-import com.example.demo.filter.UserFilter;
 import com.example.demo.model.Answer;
 import com.example.demo.model.Poll;
 import com.example.demo.model.User;
@@ -50,38 +51,22 @@ public class PollController
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('READER')")
-	public String polls(Map<String, Object> model)
+	public String polls(Map<String, Object> model, @RequestParam(defaultValue = "") String title, @RequestParam(defaultValue = "") String description, @RequestParam(defaultValue = "0") int nbMinVotes, @RequestParam(defaultValue = Integer.MAX_VALUE + "") int nbMaxVotes, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size)
 	{
-		model.put("polls", pollsRepo.findAll());
-		model.put("filter", new PollFilter());
-		return "polls";
-	}
+		PollFilter filter = new PollFilter(title, description, nbMinVotes, nbMaxVotes);
 
-	@PostMapping("/filter")
-	@PreAuthorize("hasAuthority('READER')")
-	public String pollsFiltered(@ModelAttribute(value = "filter") PollFilter filter, Map<String, Object> model)
-	{
-		List<Poll> pollsFiltered = new LinkedList<Poll>();
-		for (Poll p : pollsRepo.findAll())
+		Page<Poll> pagedResult = pollsRepo.findAllByTitleContainingAndDescriptionContainingAndNbVotesBetween(title, description, nbMinVotes, nbMaxVotes, PageRequest.of(page - 1, size));
+
+		model.put("pollsPage", pagedResult);
+		model.put("filter", filter);
+
+		int totalPages = pagedResult.getTotalPages();
+		if (totalPages > 0)
 		{
-			if (p.getTitle().contains(filter.getTitle()) && p.getOwner().getUsername().contains(filter.getOwnerUsername()))
-			{
-				int nbVotes = 0;
-				List<Answer> answers = answersRepo.findAllByPollId(p.getId());
-				for (Answer answer : answers)
-				{
-					nbVotes += numberOfVoteForAnswer(answer);
-				}
-
-				if (nbVotes >= filter.getNbMinVotes() && nbVotes <= filter.getNbMaxVotes())
-				{
-					pollsFiltered.add(p);
-				}
-			}
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.put("pageNumbers", pageNumbers);
 		}
 
-		model.put("polls", pollsFiltered);
-		model.put("filter", filter);
 		return "polls";
 	}
 
