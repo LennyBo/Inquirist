@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.model.Answer;
+import com.example.demo.model.Poll;
 import com.example.demo.model.User;
 import com.example.demo.model.Vote;
 import com.example.demo.model.VoteUser;
@@ -43,9 +45,20 @@ public class VoteController
 	public RedirectView vote(@ModelAttribute(value = "vote") Vote vote, Map<String, Object> model)
 	{
 		Answer answer = answersRepo.findById(vote.getId()).get();
+		Poll poll = answer.getPoll();
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = usersRepo.findByUsername(auth.getName());
+
+		// Check if the user has already voted for this poll
+		List<VoteUser> votes = voteUserRepo.findAllByUser(user);
+		for (VoteUser vu : votes)
+		{
+			if (poll == vu.getAnswer().getPoll())
+			{
+				return new RedirectView("/polls/result/" + answer.getPoll().getId());
+			}
+		}
 
 		// Actual user add his vote
 		VoteUser newVote = new VoteUser(user, answer, pollsRepo);
