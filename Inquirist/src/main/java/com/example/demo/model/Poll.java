@@ -27,7 +27,7 @@ public class Poll
 
 	private String title;
 	private String description;
-
+	private int nbVotes;
 	private String answersString;
 
 	@Temporal(TemporalType.DATE)
@@ -45,6 +45,7 @@ public class Poll
 		this.description = description;
 		this.startDate = new Date(System.currentTimeMillis());
 		this.owner = owner;
+		nbVotes = 0;
 	}
 
 	public Poll(User owner)
@@ -56,6 +57,11 @@ public class Poll
 
 	public Poll()
 	{
+	}
+
+	public void addVote()
+	{
+		nbVotes++;
 	}
 
 	public static boolean Valid(Poll poll)
@@ -90,6 +96,16 @@ public class Poll
 	public void setId(Long id)
 	{
 		this.id = id;
+	}
+
+	public int getNbVotes()
+	{
+		return nbVotes;
+	}
+
+	public void setNbVotes(int nbVotes)
+	{
+		this.nbVotes = nbVotes;
 	}
 
 	public String getTitle()

@@ -2,7 +2,6 @@ package com.example.demo;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
@@ -93,9 +92,9 @@ public class InquiristApplication
 					/* --- Votes --- */
 					VoteUser vote;
 					if (u.getId() % 2 == 0)
-						vote = new VoteUser(u, non);
+						vote = new VoteUser(u, non, pollsRepo);
 					else
-						vote = new VoteUser(u, oui);
+						vote = new VoteUser(u, oui, pollsRepo);
 					voteusersRepo.save(vote);
 				}
 			}

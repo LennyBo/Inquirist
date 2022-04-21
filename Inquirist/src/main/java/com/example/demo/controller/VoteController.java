@@ -17,6 +17,7 @@ import com.example.demo.model.User;
 import com.example.demo.model.Vote;
 import com.example.demo.model.VoteUser;
 import com.example.demo.repository.AnswersRepository;
+import com.example.demo.repository.PollsRepository;
 import com.example.demo.repository.UsersRepository;
 import com.example.demo.repository.VoteUsersRepository;
 
@@ -34,17 +35,20 @@ public class VoteController
 	@Autowired
 	VoteUsersRepository voteUserRepo;
 
+	@Autowired
+	PollsRepository pollsRepo;
+
 	@PostMapping
 	@PreAuthorize("hasAuthority('WRITER')")
 	public RedirectView vote(@ModelAttribute(value = "vote") Vote vote, Map<String, Object> model)
 	{
 		Answer answer = answersRepo.findById(vote.getId()).get();
-		
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = usersRepo.findByUsername(auth.getName());
 
 		// Actual user add his vote
-		VoteUser newVote = new VoteUser(user, answer);
+		VoteUser newVote = new VoteUser(user, answer, pollsRepo);
 		voteUserRepo.save(newVote);
 
 		return new RedirectView("/polls/result/" + answer.getPoll().getId());

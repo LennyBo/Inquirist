@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.example.demo.repository.PollsRepository;
+
 import lombok.Data;
 
 @Data
@@ -25,11 +27,14 @@ public class VoteUser
 	@JoinColumn(name = "answerId")
 	private Answer answer;
 
-	public VoteUser(User user, Answer answer)
+	public VoteUser(User user, Answer answer, PollsRepository pollsRepo)
 	{
 		super();
 		this.user = user;
 		this.answer = answer;
+
+		answer.getPoll().addVote();
+		pollsRepo.save(answer.getPoll());
 	}
 
 	public VoteUser()
@@ -67,5 +72,7 @@ public class VoteUser
 	public void setAnswer(Answer answer)
 	{
 		this.answer = answer;
+
+		answer.getPoll().addVote();
 	}
 }

@@ -9,15 +9,15 @@
 	
 	<h1>List of all polls</h1>
 
-	<form th:action="@{/polls/filter}" th:object="${filter}" method="get">
+	<form th:action="@{/polls}" th:object="${filter}" method="get">
 		<table>
-			<tr>
-				<td>Filter on owner username:</td>
-				<td><input type='text' name='ownerUsername' th:field="*{ownerUsername}" autofocus="true"></td>
-			</tr>
 			<tr>
 				<td>Filter on title:</td>
 				<td><input type='text' name='title' th:field="*{title}"></td>
+			</tr>
+			<tr>
+				<td>Filter on description:</td>
+				<td><input type='text' name='title' th:field="*{description}"></td>
 			</tr>
 			<tr>
 				<td>Filter on number min of votes:</td>
@@ -49,7 +49,7 @@
 		</thead>
 
 		<tbody>
-			<tr th:each="poll : ${polls}">
+			<tr th:each="poll : ${pollsPage.content}">
 				<td th:text="${poll.id}"></td>
 				<td th:text="${poll.title}"></td>
 				<td th:text="${poll.description}"></td>
@@ -63,6 +63,10 @@
 			</tr>
 		</tbody>
 	</table>
+	
+	<div th:if="${pollsPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
+	    <a th:href="@{/polls(size=${pollsPage.size}, page=${pageNumber}, title=${filter.title}, description=${filter.description}, nbMinVotes=${filter.nbMinVotes}, nbMaxVotes=${filter.nbMaxVotes})}" th:text=${pageNumber} th:class="${pageNumber==pollsPage.number + 1} ? active"></a>
+	</div>
 
 	<div sec:authorize="hasAuthority('WRITER')">
 		<a href="polls/create">Create Poll</a>
