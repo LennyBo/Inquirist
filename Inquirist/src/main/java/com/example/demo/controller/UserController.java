@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.demo.filter.UserFilter;
@@ -44,8 +48,20 @@ public class UserController
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public String users(Map<String, Object> model)
+	public String users(Map<String, Object> model, @RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize)
 	{
+//		Pageable paging = PageRequest.of(pageNo, pageSize);
+//		Page<User> pagedResult = usersRepo.findAll(paging);
+//
+//		if (pagedResult.hasContent())
+//		{
+//			model.put("users", pagedResult.getContent());
+//		}
+//		else
+//		{
+//			model.put("users", new ArrayList<User>());
+//		}
+
 		model.put("users", usersRepo.findAll());
 		model.put("filter", new UserFilter());
 		return "users";
@@ -55,16 +71,7 @@ public class UserController
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String usersFiltered(@ModelAttribute(value = "filter") UserFilter filter, Map<String, Object> model)
 	{
-		List<User> usersFiltered = new LinkedList<User>();
-		for (User u : usersRepo.findAll())
-		{
-			if (u.getUsername().contains(filter.getUsername()))
-			{
-				usersFiltered.add(u);
-			}
-		}
-
-		model.put("users", usersFiltered);
+		model.put("users", usersRepo.findAllByUsernameContaining(filter.getUsername()));
 		model.put("filter", filter);
 		return "users";
 	}

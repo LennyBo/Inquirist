@@ -1,10 +1,13 @@
 package com.example.demo.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.example.demo.model.User;
 
-public interface UsersRepository extends CrudRepository<User, Long>
+public interface UsersRepository extends PagingAndSortingRepository<User, Long>
 {
 	User findByUsername(String username);
+	List<User> findAllByUsernameContaining(String username);
 }
