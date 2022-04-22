@@ -1,5 +1,9 @@
-<div th:fragment="header">
-    <p>INQUIRIST</p>
+<div th:fragment="header" class="container">
+<div class="row">
+	<div class="col navbar-brand h1">
+    <a th:href="@{/}" style="text-decoration: none;border: 0 none;" >INQUIRIST</a>
+    </div>
+    <div class="col navbar-brand mb-0 h1">
     <div th:fragment="logout" class="logout" sec:authorize="isAuthenticated()"> 
     	<a th:href="@{/users}">Users</a>
     	<a th:href="@{/polls}">Polls</a>
@@ -13,4 +17,6 @@
         <a th:href="@{/login}">Login</a>
     </div>
     </div>
+    </div>
+</div>
 </div>

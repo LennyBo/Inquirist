@@ -1,39 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
 <title>Inquirist | polls</title>
 <meta charset="utf-8" />
 </head>
 <body>
 	<div th:replace="fragments/header :: header"></div>
-	
+	 <div class="row">
+    <div class="col-md-8 offset-md-2">
 	<h1>List of all polls</h1>
 
 	<form th:action="@{/polls}" th:object="${filter}" method="get">
 		<table>
 			<tr>
 				<td>Filter on title:</td>
-				<td><input type='text' name='title' th:field="*{title}"></td>
+				<td><input class="form-control" type='text' name='title' th:field="*{title}"></td>
 			</tr>
 			<tr>
 				<td>Filter on description:</td>
-				<td><input type='text' name='title' th:field="*{description}"></td>
+				<td><input class="form-control" type='text' name='title' th:field="*{description}"></td>
 			</tr>
 			<tr>
 				<td>Filter on number min of votes:</td>
-				<td><input type='number' name='nbMinVotes' th:field="*{nbMinVotes}" min="0"></td>
+				<td><input class="form-control" type='number' name='nbMinVotes' th:field="*{nbMinVotes}" min="0"></td>
 			</tr>
 			<tr>
 				<td>Filter on number max of votes:</td>
-				<td><input type='number' name='nbMaxVotes' th:field="*{nbMaxVotes}" min="0"></td>
+				<td><input class="form-control" type='number' name='nbMaxVotes' th:field="*{nbMaxVotes}" min="0"></td>
 			</tr>
 			<tr>
-				<td><input type="submit" value="Filter" /></td>
+				<td><input class="btn btn-outline-primary" type="submit" value="Filter" /></td>
 			</tr>
 		</table>
 	</form>
 	
-	<a href="/polls">Reset filters</a>
+	<a class="btn btn-outline-danger" href="/polls">Reset filters</a>
 
 	<table>
 		<thead>
@@ -49,16 +52,16 @@
 		</thead>
 
 		<tbody>
-			<tr th:each="poll : ${pollsPage.content}">
+			<tr class="table table-striped" th:each="poll : ${pollsPage.content}">
 				<td th:text="${poll.id}"></td>
 				<td th:text="${poll.title}"></td>
 				<td th:text="${poll.description}"></td>
 				<td th:text="${poll.startDate}"></td>
 				<td th:text="${poll.owner.name}"></td>
-				<td><a th:href="@{/polls/{id}/remove(id=${poll.id})}">Delete</a>
+				<td><a class="btn btn-outline-danger" th:href="@{/polls/{id}/remove(id=${poll.id})}">Delete</a>
 				</td>
-				<td><a th:href="@{/polls/{id}(id=${poll.id})}">Detail</a></td>
-				<td><a th:href="@{/polls/result/{id}(id=${poll.id})}">Result</a></td>
+				<td><a class="btn btn-outline-info" th:href="@{/polls/{id}(id=${poll.id})}">Detail</a></td>
+				<td><a class="btn btn-outline-primary" th:href="@{/polls/result/{id}(id=${poll.id})}">Result</a></td>
 
 			</tr>
 		</tbody>
@@ -69,7 +72,9 @@
 	</div>
 
 	<div sec:authorize="hasAuthority('WRITER')">
-		<a href="polls/create">Create Poll</a>
+		<a class="btn btn-primary" href="polls/create">Create Poll</a>
 	</div>
+	</div>
+</div>
 </body>
 </html>
