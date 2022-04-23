@@ -28,12 +28,13 @@
   	
   	<a href="/users" class="btn btn-outline-danger">Reset filters</a>
   	
-	<table>
+	<table style="margin-top: 30px;">
 		<thead>
 			<tr>
 				<th>Id</th>
 				<th>Username</th>
 				<th>Name</th>
+				<th>Role</th>
 				<th></th>
 				<th></th>
 			</tr>
@@ -43,6 +44,7 @@
 				<td th:text="${user.id}">  </td>
 				<td th:text="${user.username}">  </td>
 				<td th:text="${user.name}">  </td>
+				<td th:text="${user.role}">  </td>
 				<td><a class="btn btn-outline-danger" th:href="@{/users/{id}/remove(id=${user.id})}">Delete</a>
 				</td>
 				<td><a class="btn btn-outline-primary" th:href="@{/users/{id}(id=${user.id})}">Detail</a></td>
@@ -50,9 +52,14 @@
 		</tbody>
 	</table>
 	
-	<div th:if="${usersPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
-	    <a th:href="@{/users(size=${usersPage.size}, page=${pageNumber}, username=${filter.username})}" th:text=${pageNumber} th:class="${pageNumber==usersPage.number + 1} ? active"></a>
-	</div>
+	<nav>
+	    <ul class="pagination">
+		    <li class="page-item" th:if="${usersPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}" style="margin:8px;">
+		        <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${pageNumber}, username=${filter.username})}" th:text=${pageNumber} th:class="${pageNumber==usersPage.number + 1} ? active"></a>
+		    </li>
+		</ul>
+	</nav>
+	
 	</div>
 	</div>
 </body>

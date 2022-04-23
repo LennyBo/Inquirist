@@ -17,12 +17,12 @@
 	<div>
 		Username: <span th:text="${user.username}"></span>
 	</div>
-	<div>
+	<div style="margin-bottom: 30px;">
 		Name: <span th:text="${user.name}"></span>
 	</div>
-
-	<table>
-		<caption>Owned polls</caption>
+	
+	<div>Owned polls</div>
+	<table style="margin-bottom: 30px;">
 		<thead>
 			<tr>
 				<th>Id</th>
@@ -39,8 +39,8 @@
 		</tbody>
 	</table>
 	
+	<div>Participated polls</div>
 	<table>
-		<caption>Participated polls</caption>
 		<thead>
 			<tr>
 				<th>Id</th>

@@ -8,73 +8,77 @@
 </head>
 <body>
 	<div th:replace="fragments/header :: header"></div>
-	 <div class="row">
-    <div class="col-md-8 offset-md-2">
-	<h1>List of all polls</h1>
-
-	<form th:action="@{/polls}" th:object="${filter}" method="get">
-		<table>
-			<tr>
-				<td>Filter on title:</td>
-				<td><input class="form-control" type='text' name='title' th:field="*{title}"></td>
-			</tr>
-			<tr>
-				<td>Filter on description:</td>
-				<td><input class="form-control" type='text' name='title' th:field="*{description}"></td>
-			</tr>
-			<tr>
-				<td>Filter on number min of votes:</td>
-				<td><input class="form-control" type='number' name='nbMinVotes' th:field="*{nbMinVotes}" min="0"></td>
-			</tr>
-			<tr>
-				<td>Filter on number max of votes:</td>
-				<td><input class="form-control" type='number' name='nbMaxVotes' th:field="*{nbMaxVotes}" min="0"></td>
-			</tr>
-			<tr>
-				<td><input class="btn btn-outline-primary" type="submit" value="Filter" /></td>
-			</tr>
-		</table>
-	</form>
-	
-	<a class="btn btn-outline-danger" href="/polls">Reset filters</a>
-
-	<table>
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Title</th>
-				<th>description</th>
-				<th>StartDate</th>
-				<th>Owner</th>
-				<th></th>
-				<th></th>
-			</tr>
-		</thead>
-
-		<tbody>
-			<tr class="table table-striped" th:each="poll : ${pollsPage.content}">
-				<td th:text="${poll.id}"></td>
-				<td th:text="${poll.title}"></td>
-				<td th:text="${poll.description}"></td>
-				<td th:text="${poll.startDate}"></td>
-				<td th:text="${poll.owner.name}"></td>
-				<td><a class="btn btn-outline-danger" th:href="@{/polls/{id}/remove(id=${poll.id})}">Delete</a>
-				</td>
-				<td><a class="btn btn-outline-info" th:href="@{/polls/{id}(id=${poll.id})}">Detail</a></td>
-				<td><a class="btn btn-outline-primary" th:href="@{/polls/result/{id}(id=${poll.id})}">Result</a></td>
-
-			</tr>
-		</tbody>
-	</table>
-	
-	<div th:if="${pollsPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
-	    <a th:href="@{/polls(size=${pollsPage.size}, page=${pageNumber}, title=${filter.title}, description=${filter.description}, nbMinVotes=${filter.nbMinVotes}, nbMaxVotes=${filter.nbMaxVotes})}" th:text=${pageNumber} th:class="${pageNumber==pollsPage.number + 1} ? active"></a>
+ 	<div class="row">
+	    <div class="col-md-8 offset-md-2">
+			<h1>List of all polls</h1>
+		
+			<form th:action="@{/polls}" th:object="${filter}" method="get">
+				<table>
+					<tr>
+						<td>Filter on title:</td>
+						<td><input class="form-control" type='text' name='title' th:field="*{title}"></td>
+					</tr>
+					<tr>
+						<td>Filter on description:</td>
+						<td><input class="form-control" type='text' name='title' th:field="*{description}"></td>
+					</tr>
+					<tr>
+						<td>Filter on number min of votes:</td>
+						<td><input class="form-control" type='number' name='nbMinVotes' th:field="*{nbMinVotes}" min="0"></td>
+					</tr>
+					<tr>
+						<td>Filter on number max of votes:</td>
+						<td><input class="form-control" type='number' name='nbMaxVotes' th:field="*{nbMaxVotes}" min="0"></td>
+					</tr>
+					<tr>
+						<td><input class="btn btn-outline-primary" type="submit" value="Filter" /></td>
+					</tr>
+				</table>
+			</form>
+			
+			<a class="btn btn-outline-danger" href="/polls">Reset filters</a>
+		
+			<table style="margin-top: 30px;">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Title</th>
+						<th>description</th>
+						<th>StartDate</th>
+						<th>Owner</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+		
+				<tbody>
+					<tr class="table table-striped" th:each="poll : ${pollsPage.content}">
+						<td th:text="${poll.id}"></td>
+						<td th:text="${poll.title}"></td>
+						<td th:text="${poll.description}"></td>
+						<td th:text="${poll.startDate}"></td>
+						<td th:text="${poll.owner.name}"></td>
+						<td><a class="btn btn-outline-danger" th:href="@{/polls/{id}/remove(id=${poll.id})}">Delete</a>
+						</td>
+						<td><a class="btn btn-outline-info" th:href="@{/polls/{id}(id=${poll.id})}">Detail</a></td>
+						<td><a class="btn btn-outline-primary" th:href="@{/polls/result/{id}(id=${poll.id})}">Result</a></td>
+		
+					</tr>
+				</tbody>
+			</table>
+			
+			<nav>
+			    <ul class="pagination">
+				    <li class="page-item" th:if="${pollsPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}" style="margin:8px;">
+				        <a class="page-link"  th:href="@{/polls(size=${pollsPage.size}, page=${pageNumber}, title=${filter.title}, description=${filter.description}, nbMinVotes=${filter.nbMinVotes}, nbMaxVotes=${filter.nbMaxVotes})}" th:text=${pageNumber} th:class="${pageNumber==pollsPage.number + 1} ? active"></a>
+				    </li>
+				</ul>
+			</nav>
+		
+			<div sec:authorize="hasAuthority('WRITER')">
+				<a class="btn btn-primary" href="polls/create">Create Poll</a>
+			</div>
+		</div>
 	</div>
-
-	<div sec:authorize="hasAuthority('WRITER')">
-		<a class="btn btn-primary" href="polls/create">Create Poll</a>
-	</div>
-	</div>
-</div>
 </body>
 </html>
