@@ -1,4 +1,4 @@
-image: ubuntu
+image: maven:3.6.0-jdk-11-slim
 
 variables:
   SOME_VAR: "some value"
@@ -6,67 +6,81 @@ variables:
 
 stages:
   - build
-  - whereami
   - test
   - sonarqube
   - deploy
 
 before_script:
   - echo "Start CI/CD"
-  - echo "SOME_VAR = $SOME_VAR" # calls my custom variable
-  - echo $CI_JOB_STAGE  # calls a predefined variable -  https://docs.gitlab.com/ee/ci/variables/predefined_variables.html
-  - echo $CI_COMMIT_SHORT_SHA # calls another predefined variable
 
-# build:
-#   stage: build
-#   script:
-#     - echo "Build process"
-#     - cd Inquirist
-#     - chmod +x mvnw
-#     - ./mvnw -N wrapper:wrapper
-#     - ./mvnw clean install
-#     - echo "Build ok"
-#   only:
-#     - main
-#   tags:
-#     - alpine-docker
-#   artifacts:
-#     paths:
-#       - target/*.jar
+build:
+  stage: build
+  script:
+    - echo "Build process"
+    - cd Inquirist
+    - chmod +x mvnw
+    - ./mvnw -N wrapper:wrapper
+    - ./mvnw -Dmaven.test.skip=true install
+    - echo "Build ok"
+  only:
+    - main
+  tags:
+    - deploy
+  artifacts:
+    paths:
+      - target/*.jar
 
+test:
+  stage: test
+  script:
+    - echo "Unit test process"
+    - cd Inquirist
+    - chmod +x mvnw
+    - ./mvnw -N wrapper:wrapper
+    - ./mvnw clean install
+    - echo "Unit test ok"
+  only:
+    - main
+  tags:
+    - deploy
 
-
-# sonarqube:
-#   stage: sonarqube
-#   script:
-#     - echo "start sonarqube stage"
-#     - ls
-#     - cd Inquirist
-#     - chmod +x mvnw
-#     - ./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=0:0
-#     - echo "sonarqube ok"
-#   only:
-#     - main
-#   tags:
-#     - alpine-docker
+sonarqube:
+  stage: sonarqube
+  script:
+    - echo "start sonarqube stage"
+    - ls
+    - cd Inquirist
+    - chmod +x mvnw
+    - ./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=0:0
+    - echo "sonarqube ok"
+  only:
+    - main
+  tags:
+    - deploy
 
 deploy_ssh:
   stage: deploy
   before_script:
-    - whereami
-    - eval $(ssh-agent -s)
+    - apt-get update
     - apt-get install openssh-client -y
-    - echo "$SSH_PRIVATE_KEY" 
+    - apt-get install sshpass -y
+    - cd ..
+    - ls
   script:
     - echo "deploy apps"
-    - ssh -i $SSH_PRIVATE_KEY $SSH_USER@$SSH_HOST 'echo helloworld'
+    - sshpass -p  "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'rm -r ~/inquirist' && echo old directory removed
+    - sshpass -p  "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r inquirist $SSH_USER@$SSH_HOST:~/inquirist
+    - sshpass -p  "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST '~/deploy.sh'
+    
+    #- cd Inquirist
+    #- chmod +x mvnw
+    #- ./mvnw spring-boot:run
     - echo "deploy ok"
   only:
     - main
   tags:
-    - alpine-docker 
-    
-  # when: manual
+    - deploy  
+  when: manual
 
-after_script:
-  - echo "End CI/CD"
+#after_script:
+#  - echo "End CI/CD"

@@ -4,12 +4,13 @@ FROM openjdk:11 as build
 # Set the current working directory inside the image
 WORKDIR /app
 
+
 # Copy maven executable to the image
-COPY mvnw .
-COPY .mvn .mvn
+COPY Inquirist/mvnw .
+COPY Inquirist/.mvn .mvn
 
 # Copy the pom.xml file
-COPY pom.xml .
+COPY Inquirist/pom.xml .
 
 # remove ending of window format
 RUN sed -i 's/\r$//' mvnw
@@ -22,7 +23,7 @@ RUN ./mvnw dependency:go-offline -B
 
 
 # Copy the project source
-COPY src src
+COPY Inquirist/src src
 
 # Package the application
 RUN ./mvnw package -DskipTests
@@ -39,4 +40,4 @@ COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
 # TODO replace the entrypoint related to your projet !
-ENTRYPOINT ["java","-cp","app:app/lib/*","ch.hearc.spring.todo.JavaEeTodoProject01Application"]
+ENTRYPOINT ["java","-cp","app:app/lib/*","com.example.demo.InquiristApplication"]
