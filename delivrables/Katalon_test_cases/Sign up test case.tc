@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description>Signing up in the app as a writer</description>
+   <name>Sign up test case</name>
+   <tag></tag>
+   <comment></comment>
+   <testCaseGuid>007a3c44-7865-4066-ae25-83f7b5c51cd8</testCaseGuid>
+</TestCaseEntity>
