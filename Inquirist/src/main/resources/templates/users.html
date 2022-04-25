@@ -15,6 +15,7 @@
 	<h1>List of all users</h1>
 	
 	<form th:action="@{/users}" th:object="${filter}" method="get">
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
       	<table>
          	<tr>
             	<td>Filter on username:</td>

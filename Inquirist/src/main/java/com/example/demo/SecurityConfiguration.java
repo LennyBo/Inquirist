@@ -30,10 +30,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 	@Override
 	protected void configure(HttpSecurity http) throws Exception
 	{
-		http.authorizeRequests().antMatchers("/").permitAll().and().authorizeRequests().antMatchers("/h2/**").permitAll(); // FIXME
-		http.csrf().disable(); // FIXME
-		http.headers().frameOptions().disable(); // FIXME
-
 		http.authorizeRequests() //
 				.antMatchers("/login", "/signup").permitAll() //
 				.antMatchers("/users/**").fullyAuthenticated() //

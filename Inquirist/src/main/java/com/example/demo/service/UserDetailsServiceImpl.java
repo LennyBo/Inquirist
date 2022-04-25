@@ -30,7 +30,6 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
 		if (user == null)
 		{
-			// TODO Do something
 			return null;
 		}
 
